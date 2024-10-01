@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import backendAPI from './assets/API/backendAPI';
-import {Link, BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { Link, BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './index.css'
+import Navbar from './assets/Navbar/Navbar';
 
 
 function App() {
 
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={(
-          <h2 className='text-center text-blue-900'> yo </h2>
-        )} />
+    <div className="bg-base text-neutral h-screen">
+      <Router>
+        <Routes>
+          <Route path='/' element={(
 
-      </Routes>
-    </Router>
+            <Navbar />
+
+          )} />
+        </Routes>
+      </Router>
+    </div>
   )
 }
 
