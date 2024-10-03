@@ -93,19 +93,19 @@ function Navbar({ navRef, loggedIn }) {
               {/* When the user is not Logged in Log in and Sign in button visible along with Create blog but is disabled ofc */}
 
               <div className="shadow-mg">
-                <div className="text-lg text-neutral flex items-center justify-center text-center outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-5">
+                <Link to={'/LogIn'} className="text-lg text-neutral flex items-center justify-center text-center outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-5">
                   <FontAwesomeIcon icon={faRightToBracket} className='mr-3 text-2xl' />
-                  <Link to={'/'} className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300'>Log In</Link>
-                </div>
-              </div>
-
-              <div className="text-lg text-neutral flex items-center justify-center text-center bg-primary outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-transparent hover:text-neutral rounded-sm py-2 px-4">
-                <FontAwesomeIcon icon={faUserPlus} className='mr-2 text-2xl' />
-
-                <Link to={'/'} className="text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300">
-                  <div>Sign Up</div>
+                  <Link to={'/LogIn'} className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300'>Log In</Link>
                 </Link>
               </div>
+
+              <Link to={'/SignUp'} className="text-lg text-neutral flex items-center justify-center text-center bg-primary outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-transparent hover:text-neutral rounded-sm py-2 px-4">
+                <FontAwesomeIcon icon={faUserPlus} className='mr-2 text-2xl' />
+
+                <Link to={'/SignUp'} className="text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300">
+                  <div>Sign Up</div>
+                </Link>
+              </Link>
 
             </>
           )}
