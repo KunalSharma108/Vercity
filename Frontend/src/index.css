@@ -6,11 +6,46 @@
     .text-glow {
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6);
     }
-}
 
-.landscape-bg {
-    background-image: url('/src/assets/images/Lands.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        -webkit-text-fill-color: white;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+        -webkit-text-fill-color: white !important;
+    }
+
+    .border-gradient {
+        border-width: 4px;
+        border-style: solid;
+        border-image: linear-gradient(to bottom right, rgb(236, 72, 153) 40%, #00f) 1;
+        border-radius: 10px;
+    }
+
+    .shadow-gradient {
+        box-shadow: -2px -1px 15px rgba(236, 72, 154, 0.61), 2px 1px 15px rgba(51, 86, 193, 0.541)
+    }
+
+    .landscape-bg {
+        background-image: url('/src/assets/images/Lands.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #Form {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    #Form.show {
+        transition: opacity 1.2s ease, transform 1.2s ease;
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

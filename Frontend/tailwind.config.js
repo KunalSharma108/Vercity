@@ -10,7 +10,10 @@ module.exports = {
         neutral: '#D1D5DB', // Light gray for text
       },
       fontFamily: {
-        'Lato': ['Lato', 'sans-serif'] // Import from google fonts
+        'Lato': ['Lato', 'sans-serif'], // Import from google fonts
+        'Ubuntu': ['Ubuntu', 'sans-serif'],
+        'Kanit': ['Kanit', 'sans-serif'],
+        'Roboto': ['Roboto Slab', 'serif']
       },
       boxShadow: {
         'even-sm': '0px 0px 5px rgba(0, 0, 0, 0.2)', // Soft shadow
