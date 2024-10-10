@@ -14,7 +14,7 @@ admin.initializeApp({
 });
 
 app.get('/', (req, res) => {
-  res.send({ message: "eeee" });
+  res.send({ message: "Hello how are you , i am under the water !!!!" });
 })
 
 app.post('/post', (req, res) => {
