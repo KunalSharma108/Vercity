@@ -15,6 +15,7 @@ admin.initializeApp({
 
 app.get('/', (req, res) => {
   res.send({ message: "Hello how are you , i am under the water !!!!" });
+  console.log(req)
 })
 
 app.post('/post', (req, res) => {
@@ -47,24 +48,5 @@ app.post('/post', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running !`);
 })
-
-
-// // server.js
-// const express = require('express');
-// const app = express();
-// const PORT = process.env.PORT || 3000;
-
-// // Middleware to parse JSON bodies
-// app.use(express.json());
-
-// // Sample route
-// app.get('/', (req, res) => {
-//   res.send('Hello, World!');
-// });
-
-// // Start the server
-// app.listen(PORT, () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-// });
