@@ -31,7 +31,7 @@
     }
 
     .landscape-bg {
-        background-image: url('/src/assets/images/Lands.jpg');
+        background-image: url('./assets/images/lands.jpg');
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
