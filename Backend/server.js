@@ -4,7 +4,9 @@ const cors = require('cors')
 const express = require('express')
 const app = express();
 const PORT = process.env.PORT;
-const serviceAccount = require('./serviceAccountKey.json')
+const serviceAccount = require('./serviceAccountKey.json');
+
+const { CreateUser } = require('./functions/CreateUser');
 
 app.use(cors());
 app.use(express.json());
@@ -14,37 +16,27 @@ admin.initializeApp({
 });
 
 app.get('/', (req, res) => {
-  res.send({ message: "Hello how are you , i am under the water !!!!" });
-  console.log(req.ip)
+  res.send({ message: "Hello server!" });
 })
 
-app.post('/post', (req, res) => {
-  res.send({
-    blogID: 'blog22',
-    blogAuthor: 'bigger casoh',
-    blogTitle: 'The last time i pooped was 2 years ago',
-    blogContent: 'I am on my way to make the world record of not pooping for the longest period of time...',
-    blogLikes: 20,
-    commentsCount: 2,
-    comments: {
-      comment1: {
-        commentID: 1,
-        commentAuthor: 'Nalvo',
-        commentContent: 'Do you really think its healthy?',
-        commentLikes: 2,
-        commentReplyCount: 1,
-        commentReplies: {
-          commentReply1: {
-            commentID: 1,
-            commentAuthor: 'bigger casoh',
-            commentContent: 'Idk but world record is world record',
-            commentLikes: 1,
-          }
-        }
-      }
+app.post('/SignUp', async (req, res) => {
+  const {username, email, password} = req.body;
+
+  try {    
+    let result = await CreateUser({username, email, password});
+  
+    if (!result.valid) {
+      res.status(400).json({error: 'Bad request'})
+    } else if (result.valid && result.error) {
+      res.status(404).json({error: 'Not Found'})
+    } else if (result.valid && !result.error) {
+      res.status(200).json({message: 'User created successfully'})
     }
+  } catch (error) {
+    console.log(`There was an error : ${error}`)
+    res.status(400).json({error: 'bad request'})
   }
-  )
+
 })
 
 app.listen(PORT, () => {

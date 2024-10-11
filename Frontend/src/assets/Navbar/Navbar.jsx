@@ -95,16 +95,16 @@ function Navbar({ navRef, loggedIn }) {
               <div className="shadow-mg">
                 <Link to={'/LogIn'} className="text-lg text-neutral flex items-center justify-center text-center outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-5">
                   <FontAwesomeIcon icon={faRightToBracket} className='mr-3 text-2xl' />
-                  <Link to={'/LogIn'} className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300'>Log In</Link>
+                  <div className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300'>Log In</div>
                 </Link>
               </div>
 
               <Link to={'/SignUp'} className="text-lg text-neutral flex items-center justify-center text-center bg-primary outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-transparent hover:text-neutral rounded-sm py-2 px-4">
                 <FontAwesomeIcon icon={faUserPlus} className='mr-2 text-2xl' />
 
-                <Link to={'/SignUp'} className="text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300">
+                <div className="text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300">
                   <div>Sign Up</div>
-                </Link>
+                </div>
               </Link>
 
             </>
