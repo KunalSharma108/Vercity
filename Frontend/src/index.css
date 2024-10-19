@@ -64,4 +64,43 @@
     .animate-fade-in {
         animation: fade-in 3s forwards;
     }
+
+    .parent-load {
+        position: relative;
+        width: 400px;
+        height: 15px;
+        border: 1px solid white;
+        border-radius: 8px;
+    }
+
+    .bg-warning-loading {
+        margin-top: -1px;
+        height: 100%;
+        width: 0;
+        border-radius: 8px;
+        transition: width 2s, opacity 1s;
+        opacity: 1;
+    }
+
+    .bg-warning-loading.loading {
+        width: 100%;
+        opacity: 0;
+    }
+
+    @keyframes increaseWidth {
+        0% {
+            width: 0%;
+        }
+
+        100% {
+            width: 100%;
+        }
+    }
+
+    .startAnimation {
+        width: 0%;
+        height: inherit;
+        animation: increaseWidth 0.4s ease-in-out forwards;
+    }
+
 }

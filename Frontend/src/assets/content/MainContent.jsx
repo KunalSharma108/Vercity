@@ -18,8 +18,6 @@ function MainContent() {
     fetchData();
   }, []);
 
-  console.log(data)
-
   return (
     <div>
       {data ? (
