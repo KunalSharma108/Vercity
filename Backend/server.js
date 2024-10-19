@@ -33,7 +33,7 @@ admin.initializeApp({
 const COOKIE_OPTIONS = {
   httpOnly: true,  // Prevents access via JavaScript (browser can't read it)
   secure: true,   // Set to false when testing over HTTP (local development)
-  sameSite: 'strict',
+  sameSite: 'none',
   maxAge: 10 * 60 * 60 * 1000,  // 10 hours
 };
 
