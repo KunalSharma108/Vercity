@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faPlus, faArrowRightFromBracket, faRightToBracket, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import Vercity from '../images/Vercity-logo.png'
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import backendAPI from '../API/backendAPI';
 
 function Navbar({ navRef, loggedIn }) {
   const [isFocus, setisFocus] = useState(false);
@@ -36,6 +38,19 @@ function Navbar({ navRef, loggedIn }) {
       }
     });
   }, [searchQuery]);
+
+  const handleSignOut = async () => {
+    let result = await axios.post(`${backendAPI}/LogOut`, {}, {
+      withCredentials: true,
+    }).then(response => {
+      if (response.status == 201) {
+        window.location.reload()
+      } else {
+        window.alert('There was a problem in trying to log out.')
+        navigate('/')
+      }
+    })
+  }
 
   return (
     <nav ref={navRef} className='bg-base backdrop-blur-md bg-opacity-80 w-screen py-2 flex items-center justify-between fixed shadow-even-md shadow-black'>
@@ -80,7 +95,7 @@ function Navbar({ navRef, loggedIn }) {
 
               <div className="text-lg text-neutral flex items-center justify-center text-center bg-red-500 outline outline-2 rounded-sm outline-red-500 shadow-red-500 shadow-even-sm font-Lato hover:shadow-even-lg hover:shadow-red-500 duration-300 cursor-pointer hover:bg-transparent hover:text-neutral py-2 px-3">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} className='mr-2 text-2xl' />
-                <Link to={'/'} className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300'>
+                <Link to={'/'} className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300' onClick={handleSignOut}>
                   Sign Out
                 </Link>
                 {/* When the user is logged in only the Sign out button along with Create Blog button is visible */}

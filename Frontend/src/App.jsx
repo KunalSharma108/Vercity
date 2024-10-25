@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        let request = await axios.post(`${backendAPI}/checkCookie`, {}, {
+        let request = await axios.post(`${backendAPI}/verifyCookie`, {}, {
           withCredentials: true,
         });
         setLoading('loadingDone');
@@ -28,11 +28,12 @@ function App() {
           setLoading(true);
         }, 500);
 
-        console.log(request.data)
         Cookies.set('loggedIn', request.data.loggedIn);
 
       } catch (error) {
-        console.error('Login check failed:', error);
+        if (Cookies.get('loggedIn')) {
+          Cookies.remove('loggedIn')
+        }
         setLoading('loadingDone');
         setTimeout(() => {
           setLoading(true);
@@ -100,3 +101,5 @@ function App() {
 }
 
 export default App;
+
+// TODO: implement the same warning feature in log in and setup login too

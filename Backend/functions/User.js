@@ -24,13 +24,13 @@ async function CreateUser({ username, email, password }) {
       const UID = result.uid
 
       const payload = {
-        uid:UID,
+        uid: UID,
         email: email
       }
 
       const token = Create_Key(payload);
 
-      return { valid: true, error: false, message: 'User created successfully', token:token};
+      return { valid: true, error: false, message: 'User created successfully', token: token };
     } catch (error) {
       if (error.code === 'auth/email-already-exists') {
 
@@ -52,9 +52,24 @@ async function CreateUser({ username, email, password }) {
         return { valid: false, error: true, message: `Unknown error: ${error.message}` };
       }
     }
-
   }
-
 }
 
-module.exports = { CreateUser };
+async function LogInUser({ idToken }) {
+  try {
+    const userCredentials = await admin.auth().verifyIdToken(idToken);
+    const payload = {
+      uid: userCredentials.uid,
+      email: userCredentials.email
+    }
+
+    const token = Create_Key(payload);
+
+    return { message: 'Log in successfull', token: token }
+
+  } catch (error) {
+    return { error: true, message: error };
+  }
+}
+
+module.exports = { CreateUser, LogInUser };

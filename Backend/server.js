@@ -8,7 +8,7 @@ const ORIGIN = process.env.ORIGIN;
 const serviceAccount = require('./serviceAccountKey.json');
 const cookieParser = require('cookie-parser');
 
-const { CreateUser } = require('./functions/User');
+const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
 
 app.use(cors({
@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/SignUp', async (req, res) => {
-  console.log(`SignUp request sent by - ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
+  console.log(`SignUp request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
   const { username, email, password } = req.body;
 
   try {
@@ -60,7 +60,7 @@ app.post('/SignUp', async (req, res) => {
       // Success case
       let token = result.token;
       res.cookie('auth_token', token, COOKIE_OPTIONS);
-      res.status(201).json({ message: 'User created successfully', token: result.token });  // 201 Created for successful user creation
+      res.status(201).json({ message: 'User created successfully'});  // 201 Created for successful user creation
     }
   } catch (error) {
     console.log(`There was an error: ${error.message}`);
@@ -68,7 +68,7 @@ app.post('/SignUp', async (req, res) => {
   }
 })
 
-app.post('/checkCookie', async (req, res) => {
+app.post('/verifyCookie', async (req, res) => {
   console.log(`cookie request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
   let userToken = req.cookies['auth_token'];
 
@@ -88,7 +88,7 @@ app.post('/checkCookie', async (req, res) => {
     res.status(200).send({
       message: 'User exists',
       email: userRecord.email,
-      displayName: userRecord.displayName || null, 
+      displayName: userRecord.displayName || null,
       loggedIn: true,
     });
 
@@ -100,6 +100,35 @@ app.post('/checkCookie', async (req, res) => {
     });
   }
 });
+
+app.post('/LogOut', async (req, res) => {
+  try {
+    console.log(`Log Out request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
+    res.clearCookie('auth_token');
+    res.status(201).send({ message: 'Log out successfull' })
+
+  } catch (error) {
+    res.clearCookie('auth_token');
+    res.status(404).send({ error: `An error occured : ${error}` })
+  }
+})
+
+app.post('/LogIn', async (req, res) => {
+  console.log(`Log In request sent by ${req.get('origin') || req.get('referer' || 'unkown origin')}`)
+  const { idToken } = req.body;
+
+  try {
+    let result = await LogInUser({ idToken });
+
+    if (result.token) {
+      let token = result.token;
+      res.cookie('auth_token', token, COOKIE_OPTIONS);
+      res.status(201).json({ message: 'User created successfully'});
+    }
+  } catch (error) {
+
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running !`);

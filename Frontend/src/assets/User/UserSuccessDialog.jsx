@@ -2,17 +2,18 @@ import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import Slide from '@mui/material/Slide';
 
+// Custom transition to slow down the animation
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} timeout={300} />;
+  return <Slide direction="up" ref={ref} {...props} timeout={300} />;  // Adjusted the timeout for slower animation
 });
 
-const WarningDialog = ({ open, handleClose, handleLogout }) => {
+const UserSuccessDialog = ({ open, handleClose, userState }) => {
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       TransitionComponent={Transition}
-      aria-labelledby="warning-dialog-title"
+      aria-labelledby="sign-up-success-title"
       maxWidth="sm"
       fullWidth
       sx={{
@@ -33,48 +34,49 @@ const WarningDialog = ({ open, handleClose, handleLogout }) => {
         }
       }}
     >
-      <DialogTitle id="warning-dialog-title" sx={{ textAlign: 'center', mb: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-          Warning!
+      <DialogTitle id="sign-up-success-title" sx={{ textAlign: 'center', mb: 2 }}>
+        <Typography
+          variant="h4"
+          sx={{
+            background: 'linear-gradient(90deg, #f50057, #3B82F6)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textShadow: '2px 2px 8px rgba(255, 255, 255, 0.3)',
+            fontWeight: 'bold',
+            fontSize: '3rem'
+          }}
+        >
+          {userState} Successful!
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <Typography variant="body1" gutterBottom sx={{ textAlign: 'center' }}>
-          You are already logged in. To sign up again, please log out first.
+        <Typography variant="body1" className='' gutterBottom sx={{
+          textAlign: 'center',
+          fontFamily: 'Lucida Sans, Lucida Sans Regular, Lucida Grande, Lucida Sans Unicode, Geneva, Verdana, sans-serif',
+          fontSize:'18px',
+          fontWeight:'medium'
+        }}>
+          Welcome! You're ready to start Blogging.
         </Typography>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={handleClose}
-          variant="outlined"
-          sx={{
-            color: '#3B82F6',
-            borderColor: '#3B82F6',
-            '&:hover': {
-              backgroundColor: '#3B82F6',
-              color: '#ffffff',
-              boxShadow: '0 4px 20px rgba(59, 130, 246, 0.3)',
-            },
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleLogout}
           variant="contained"
           sx={{
-            backgroundColor: '#EF4444',
+            backgroundColor: '#3B82F6',
             color: '#ffffff',
+            width: '100%',
             '&:hover': {
-              backgroundColor: '#C72C2C', 
+              backgroundColor: '#2563EB',
             }
           }}
         >
-          Log Out
+          Start Blogging
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default WarningDialog;
+export default UserSuccessDialog;

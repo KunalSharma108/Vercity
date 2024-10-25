@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import backendAPI from '../../API/backendAPI';
-import SignUpSuccessDialog from './SignUpSuccessDialog';
+import UserSuccessDialog from '../UserSuccessDialog';
 
 function SignUpContent() {
   const navigate = useNavigate();
@@ -22,6 +22,8 @@ function SignUpContent() {
   });
   const [isVisible, setIsVisible] = useState(false);
   const [DialogOpen, setDialogOpen] = useState(false);
+  const [canSignUp, setCanSignUp] = useState(true);
+
 
   const handleOpen = () => setDialogOpen(true);
   const handleClose = () => {
@@ -53,6 +55,7 @@ function SignUpContent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setCanSignUp(false)
 
     if (username.trim() == '') {
       setErr({
@@ -62,6 +65,7 @@ function SignUpContent() {
         robotErr: false,
         emailAlreadyInUse: err.emailAlreadyInUse
       })
+      setCanSignUp(true)
     } else if (email.trim() == '') {
       setErr({
         userErr: false,
@@ -70,6 +74,7 @@ function SignUpContent() {
         robotErr: false,
         emailAlreadyInUse: false
       })
+      setCanSignUp(true)
     } else if (password.trim() == '' || password.length <= 6) {
       setErr({
         userErr: false,
@@ -78,6 +83,7 @@ function SignUpContent() {
         robotErr: false,
         emailAlreadyInUse: false
       })
+      setCanSignUp(true)
     } else if (!isChecked) {
       setErr({
         userErr: false,
@@ -86,6 +92,7 @@ function SignUpContent() {
         robotErr: true,
         emailAlreadyInUse: false
       })
+      setCanSignUp(true)
     } else {
       setErr({
         userErr: false,
@@ -112,6 +119,7 @@ function SignUpContent() {
         })
 
         handleOpen();
+        setCanSignUp(true)
 
       } catch (error) {
         if (error.response) {
@@ -119,6 +127,7 @@ function SignUpContent() {
           const statusCode = error.response.status;
           if (statusCode === 400) {
             window.alert('There was a problem with your input, need to refresh the page.')
+            setCanSignUp(true)
             window.location.reload();
 
           } else if (statusCode === 409) {
@@ -130,13 +139,16 @@ function SignUpContent() {
               robotErr: false,
               emailAlreadyInUse: true
             })
+            setCanSignUp(true)
 
           } else {
             window.alert('Something Wrong happened, Need to refresh the page!')
+            setCanSignUp(true)
           }
         } else {
           // If the error doesn't have a response (like network issues)
           window.alert('Something Wrong happened, Need to refresh the page!')
+          setCanSignUp(true)
           window.location.reload()
         }
       }
@@ -146,7 +158,7 @@ function SignUpContent() {
 
   return (
     <>
-      <SignUpSuccessDialog open={DialogOpen} handleClose={handleClose} />
+      <UserSuccessDialog open={DialogOpen} handleClose={handleClose} userState={'Sign Up'} />
 
       <div className={`w-[28rem] h-fit border-4 border-gradient rounded-md shadow-gradient shadow-even-lg backdrop-blur-md p-8 transition-all duration-500 ${isVisible ? 'show' : ''}`} id='Form'>
 
@@ -252,7 +264,9 @@ function SignUpContent() {
             </div>
 
             <div className="text-center">
-              <button className="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-[#2355a5] transition-colors duration-300" onClick={(e) => handleSubmit(e)}>
+              <button
+                className={`w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-[#2355a5] transition-colors duration-300 ${canSignUp ? '' : 'disabled:opacity-30 cursor-not-allowed'}`}
+                onClick={(e) => handleSubmit(e)}>
                 Sign Up
               </button>
             </div>
