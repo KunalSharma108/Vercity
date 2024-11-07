@@ -60,7 +60,7 @@ app.post('/SignUp', async (req, res) => {
       // Success case
       let token = result.token;
       res.cookie('auth_token', token, COOKIE_OPTIONS);
-      res.status(201).json({ message: 'User created successfully'});  // 201 Created for successful user creation
+      res.status(201).json({ message: 'User created successfully' });  // 201 Created for successful user creation
     }
   } catch (error) {
     console.log(`There was an error: ${error.message}`);
@@ -70,6 +70,15 @@ app.post('/SignUp', async (req, res) => {
 
 app.post('/verifyCookie', async (req, res) => {
   console.log(`cookie request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
+  if (!req.cookies['auth_token']) {
+    res.clearCookie('auth_token', { path: '/' });
+    res.clearCookie('loggedIn', { path: '/' });
+    res.status(404).send({
+      error: 'User not found',
+    });
+  }
+
+  console.log(`Auth token found : ${req.cookies['auth_token']}`)
   let userToken = req.cookies['auth_token'];
 
   let userData = Verify_Key(userToken);
@@ -94,10 +103,11 @@ app.post('/verifyCookie', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching user data:', error);
-    res.clearCookie('auth_token');
-    res.clearCookie('loggedIn');
+    res.clearCookie('auth_token', { path: '/' });
+    res.clearCookie('loggedIn', { path: '/' });
     res.status(404).send({
       error: 'User not found',
+      loggedIn:false
     });
   }
 });
@@ -105,8 +115,8 @@ app.post('/verifyCookie', async (req, res) => {
 app.post('/LogOut', async (req, res) => {
   try {
     console.log(`Log Out request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
-    res.clearCookie('auth_token');
-    res.clearCookie('loggedIn');
+    res.clearCookie('auth_token', { path: '/' });
+    res.clearCookie('loggedIn', { path: '/' });
     res.status(201).send({ message: 'Log out successfull' })
 
   } catch (error) {
@@ -125,7 +135,7 @@ app.post('/LogIn', async (req, res) => {
     if (result.token) {
       let token = result.token;
       res.cookie('auth_token', token, COOKIE_OPTIONS);
-      res.status(201).json({ message: 'User created successfully'});
+      res.status(201).json({ message: 'User created successfully' });
     }
   } catch (error) {
 
