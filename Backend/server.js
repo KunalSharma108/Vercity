@@ -105,8 +105,8 @@ app.post('/verifyCookie', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching user data:', error);
-    res.clearCookie('auth_token', { path: '/' });
-    res.clearCookie('loggedIn', { path: '/' });
+    res.clearCookie('auth_token', COOKIE_OPTIONS);
+    res.clearCookie('loggedIn', COOKIE_OPTIONS);
     res.status(404).send({
       error: 'User not found',
       loggedIn:false
