@@ -70,12 +70,14 @@ app.post('/SignUp', async (req, res) => {
 
 app.post('/verifyCookie', async (req, res) => {
   console.log(`cookie request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
-  if (!req.cookies['auth_token']) {
+  if (req.cookies['auth_token'] == undefined) {
     res.clearCookie('auth_token', { path: '/' });
     res.clearCookie('loggedIn', { path: '/' });
     res.status(404).send({
       error: 'User not found',
     });
+
+    return
   }
 
   console.log(`Auth token found : ${req.cookies['auth_token']}`)
