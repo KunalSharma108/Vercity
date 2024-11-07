@@ -45,7 +45,8 @@ function Navbar({ navRef, loggedIn }) {
       withCredentials: true,
     }).then(response => {
       if (response.status == 201) {
-        Cookies.remove('loggedIn')
+        Cookies.remove('loggedIn');
+        Cookies.remove('auth_token')
         window.location.reload()
       } else {
         window.alert('There was a problem in trying to log out.')
