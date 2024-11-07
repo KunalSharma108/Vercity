@@ -114,10 +114,8 @@ app.post('/verifyCookie', async (req, res) => {
 });
 
 app.post('/LogOut', async (req, res) => {
-  console.log('Before clearing:', req.cookies);
   res.clearCookie('auth_token', { path: '/', secure: true, sameSite: 'none' });
   res.clearCookie('loggedIn', { path: '/', secure: true, sameSite: 'none' });
-  console.log('After clearing:', req.cookies);
   res.status(201).send({ message: 'Log out successful' });
 });
 
