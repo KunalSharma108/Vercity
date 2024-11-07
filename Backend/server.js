@@ -105,6 +105,7 @@ app.post('/LogOut', async (req, res) => {
   try {
     console.log(`Log Out request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
     res.clearCookie('auth_token');
+    res.clearCookie('loggedIn')
     res.status(201).send({ message: 'Log out successfull' })
 
   } catch (error) {

@@ -5,6 +5,7 @@ import Vercity from '../images/Vercity-logo.png'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import backendAPI from '../API/backendAPI';
+import Cookies from 'js-cookie';
 
 function Navbar({ navRef, loggedIn }) {
   const [isFocus, setisFocus] = useState(false);
@@ -44,6 +45,7 @@ function Navbar({ navRef, loggedIn }) {
       withCredentials: true,
     }).then(response => {
       if (response.status == 201) {
+        Cookies.remove('loggedIn')
         window.location.reload()
       } else {
         window.alert('There was a problem in trying to log out.')
