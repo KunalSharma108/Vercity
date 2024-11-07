@@ -50,6 +50,8 @@ function Navbar({ navRef, loggedIn }) {
         window.location.reload()
       } else {
         window.alert('There was a problem in trying to log out.')
+        Cookies.remove('loggedIn');
+        Cookies.remove('auth_token');
         navigate('/')
       }
     })
@@ -96,11 +98,12 @@ function Navbar({ navRef, loggedIn }) {
                 <div>Create Blog</div>
               </Link>
 
-              <div className="text-lg text-neutral flex items-center justify-center text-center bg-red-500 outline outline-2 rounded-sm outline-red-500 shadow-red-500 shadow-even-sm font-Lato hover:shadow-even-lg hover:shadow-red-500 duration-300 cursor-pointer hover:bg-transparent hover:text-neutral py-2 px-3">
+              <div onClick={handleSignOut} className="text-lg text-neutral flex items-center justify-center text-center bg-red-500 outline outline-2 rounded-sm outline-red-500 shadow-red-500 shadow-even-sm font-Lato hover:shadow-even-lg hover:shadow-red-500 duration-300 cursor-pointer hover:bg-transparent hover:text-neutral py-2 px-3">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} className='mr-2 text-2xl' />
-                <Link to={'/'} className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300' onClick={handleSignOut}>
+                <div className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300' 
+                onClick={handleSignOut}>
                   Sign Out
-                </Link>
+                </div>
                 {/* When the user is logged in only the Sign out button along with Create Blog button is visible */}
               </div>
 

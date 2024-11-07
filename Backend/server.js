@@ -77,8 +77,6 @@ app.post('/verifyCookie', async (req, res) => {
     return res.status(404).send({
       error: 'User not found',
     });
-
-
   }
 
   console.log(`Auth token found : ${req.cookies['auth_token']}`)
