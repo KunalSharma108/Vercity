@@ -70,14 +70,15 @@ app.post('/SignUp', async (req, res) => {
 
 app.post('/verifyCookie', async (req, res) => {
   console.log(`cookie request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
-  if (req.cookies['auth_token'] == undefined) {
-    res.clearCookie('auth_token', { path: '/' });
-    res.clearCookie('loggedIn', { path: '/' });
-    res.status(404).send({
+
+  if (req.cookies['auth_token'] === undefined) {
+    res.clearCookie('auth_token', { path: '/', secure: true, sameSite: 'none' });
+    res.clearCookie('loggedIn', { path: '/', secure: true, sameSite: 'none' });
+    return res.status(404).send({
       error: 'User not found',
     });
 
-    return
+
   }
 
   console.log(`Auth token found : ${req.cookies['auth_token']}`)
@@ -109,23 +110,18 @@ app.post('/verifyCookie', async (req, res) => {
     res.clearCookie('loggedIn', COOKIE_OPTIONS);
     res.status(404).send({
       error: 'User not found',
-      loggedIn:false
+      loggedIn: false
     });
   }
 });
 
 app.post('/LogOut', async (req, res) => {
-  try {
-    console.log(`Log Out request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
-    res.clearCookie('auth_token', { path: '/' });
-    res.clearCookie('loggedIn', { path: '/' });
-    res.status(201).send({ message: 'Log out successfull' })
-
-  } catch (error) {
-    res.clearCookie('auth_token');
-    res.status(404).send({ error: `An error occured : ${error}` })
-  }
-})
+  console.log('Before clearing:', req.cookies);
+  res.clearCookie('auth_token', { path: '/', secure: true, sameSite: 'none' });
+  res.clearCookie('loggedIn', { path: '/', secure: true, sameSite: 'none' });
+  console.log('After clearing:', req.cookies);
+  res.status(201).send({ message: 'Log out successful' });
+});
 
 app.post('/LogIn', async (req, res) => {
   console.log(`Log In request sent by ${req.get('origin') || req.get('referer' || 'unkown origin')}`)
