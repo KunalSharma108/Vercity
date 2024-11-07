@@ -94,7 +94,8 @@ app.post('/verifyCookie', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching user data:', error);
-    res.clearCookie();
+    res.clearCookie('auth_token');
+    res.clearCookie('loggedIn');
     res.status(404).send({
       error: 'User not found',
     });
@@ -105,7 +106,7 @@ app.post('/LogOut', async (req, res) => {
   try {
     console.log(`Log Out request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
     res.clearCookie('auth_token');
-    res.clearCookie('loggedIn')
+    res.clearCookie('loggedIn');
     res.status(201).send({ message: 'Log out successfull' })
 
   } catch (error) {
