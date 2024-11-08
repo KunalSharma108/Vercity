@@ -93,7 +93,7 @@ function Navbar({ navRef, loggedIn }) {
           {loggedIn ? (
 
             <>
-              <Link to={'/'} className={`text-lg text-neutral flex items-center justify-center text-center rounded-md font-Lato ${loggedIn ? 'outline outline-2 outline-primary shadow-primary hover:shadow-even-lg hover:shadow-primary transition-colors duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-3 box-border outline-offset-0' : 'cursor-not-allowed text-gray-400 pointer-events-none select-none opacity-50'}`}>
+              <Link to={'/CreateBlog'} className={`text-lg text-neutral flex items-center justify-center text-center rounded-md font-Lato ${loggedIn ? 'outline outline-2 outline-primary shadow-primary hover:shadow-even-lg hover:shadow-primary transition-colors duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-3 box-border outline-offset-0' : 'cursor-not-allowed text-gray-400 pointer-events-none select-none opacity-50'}`}>
                 <FontAwesomeIcon icon={faPlus} className='mr-2 text-2xl' />
                 <div>Create Blog</div>
               </Link>

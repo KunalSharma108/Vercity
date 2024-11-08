@@ -109,7 +109,7 @@ function LogInContent() {
         try {
           const userCredentials = await signInWithEmailAndPassword(auth, email, password);
 
-          const idToken = await userCredentials.user.getIdToken(); 
+          const idToken = await userCredentials.user.getIdToken();
 
           let result = await axios.post(`${backendAPI}/LogIn`, {
             idToken
@@ -130,23 +130,25 @@ function LogInContent() {
         } catch (error) {
           switch (error.code) {
             case 'auth/user-not-found':
-              console.error('No user found with this email address.');
+              window.alert('No user found with this email address.');
+              setCanLogIn(true)
               break;
-            case 'auth/wrong-password':
-              console.error('Incorrect password. Please try again.');
-              break;
-            case 'auth/invalid-email':
-              console.error('Invalid email format. Please check your email.');
+            case 'auth/invalid-credential':
+              window.alert('Incorrect Credentials. Please try again.');
+              setCanLogIn(true)
               break;
             case 'auth/user-disabled':
-              console.error('This user account has been disabled.');
+              window.alert('This user account has been disabled.');
+              setCanLogIn(true)
               break;
             default:
-              console.error('Login failed:', error.message);
+              window.alert('Login failed. Please try again later.');
+              setCanLogIn(true)
+              console.log(`Login failed : ${error}`)
               break;
           }
         }
-        
+
       } catch (error) {
         if (error.response) {
           const statusCode = error.response.status;
@@ -288,7 +290,11 @@ function LogInContent() {
             </div>
 
             <div className="text-center">
-              <button className="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-[#2355a5] transition-colors duration-300" onClick={handleLogIn}>
+              <button
+                className={`w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-[#2355a5] transition-colors duration-300 ${canLogIn ? '' : 'disabled:opacity-30 cursor-not-allowed'}`}
+                onClick={(e) => handleLogIn(e)}
+                disabled={!canLogIn}
+                >
                 Log In
               </button>
             </div>

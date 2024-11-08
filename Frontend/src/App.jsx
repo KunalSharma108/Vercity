@@ -67,7 +67,7 @@ function App() {
               <>
                 <Navbar navRef={navRef} loggedIn={loggedIn} />
                 <div className="h-full" style={{ paddingTop: `${navHeight}px` }}>
-                  <Suspense fallback='Loading my nigga'>
+                  <Suspense fallback={<Loading class='startAnimation' />}>
                     <MainContent height={navHeight} />
                   </Suspense>
                 </div>
@@ -78,11 +78,11 @@ function App() {
               <Offline />
             )}
           </div>
-        } />
+        }/>
 
         <Route path='/SignUp' element={(
           <div className='bg-base w-screen h-screen'>
-            <Suspense fallback=''>
+            <Suspense fallback={<Loading class='startAnimation' />}>
               <SignUp />
             </Suspense>
           </div>
@@ -90,7 +90,7 @@ function App() {
 
         <Route path='/LogIn' element={(
           <div className='bg-base w-screen h-screen'>
-            <Suspense fallback=''>
+            <Suspense fallback={<Loading class='startAnimation' />}>
               <LogIn />
             </Suspense>
           </div>
@@ -102,4 +102,4 @@ function App() {
 
 export default App;
 
-// TODO: implement the same warning feature in log in and setup login too
+// TODO: implement Create blog page 
