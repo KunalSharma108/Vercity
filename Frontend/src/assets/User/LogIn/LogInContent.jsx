@@ -213,6 +213,7 @@ function LogInContent() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                disabled={!canLogIn}
               />
             </div>
 
@@ -235,6 +236,7 @@ function LogInContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={!canLogIn}
               />
             </div>
 
@@ -259,6 +261,7 @@ function LogInContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={!canLogIn}
               />
             </div>
 

@@ -44,7 +44,7 @@ function SignUp() {
   };
 
   return (
-    <div className="w-screen h-screen landscape-bg transition-colors duration-200 flex items-center justify-center">
+    <div className="w-screen h-screen landscape-bg transition-colors duration-200 flex items-center justify-center overflow-hidden">
       <WarningDialog
         open={isDialogOpen}
         handleClose={handleCloseDialog}

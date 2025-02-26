@@ -15,13 +15,7 @@ Here are some ideas for features you could implement in your blogging platform "
      - Implement a simple editor with a color-picker (e.g., using a library like [react-color](https://github.com/reactjs/react-color)).
      - Allow users to select text and apply a color or highlight.
      - Store the styles in a custom markdown format (or as inline HTML if needed).
-
-### 3. **Rich Text Editor (WYSIWYG)**
-   - **Why**: Sometimes, a visual editor is more user-friendly than markdown. This would attract a wider audience.
-   - **How**: 
-     - Implement a WYSIWYG (What You See Is What You Get) editor using libraries like [Quill](https://quilljs.com/) or [Draft.js](https://draftjs.org/).
-     - This allows users to format text easily (bold, italic, underline, list, etc.) and also add images, links, and embeds.
-
+     
 ### 4. **Image and Media Embeds**
    - **Why**: Enabling users to embed images or videos makes the content richer and more engaging.
    - **How**: 

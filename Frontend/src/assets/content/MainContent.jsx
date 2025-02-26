@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import backendAPI from '../API/backendAPI';
 
-function MainContent() {
+function MainContent(height) {
   const [data, setData] = useState(null); 
 
   useEffect(() => {

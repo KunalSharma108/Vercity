@@ -1,5 +1,4 @@
 require('dotenv').config();
-const admin = require("firebase-admin");
 const cors = require('cors')
 const express = require('express')
 const app = express();
@@ -10,6 +9,8 @@ const cookieParser = require('cookie-parser');
 
 const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
+const { draft } = require('./functions/blogFunc');
+const { admin } = require('./functions/firebaseconfig');
 
 app.use(cors({
   origin: ORIGIN,
@@ -26,13 +27,9 @@ app.use((req, res, next) => {
   next();
 });
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
 const COOKIE_OPTIONS = {
-  httpOnly: true,  // Prevents access via JavaScript (browser can't read it)
-  secure: true,   // Set to false when testing over HTTP (local development)
+  httpOnly: true,  // Prevents access via JS (browser can't read it)
+  secure: true,
   sameSite: 'none',
   maxAge: 10 * 60 * 60 * 1000,  // 10 hours
 };
@@ -42,7 +39,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/SignUp', async (req, res) => {
-  console.log(`SignUp request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
   const { username, email, password } = req.body;
 
   try {
@@ -69,8 +65,6 @@ app.post('/SignUp', async (req, res) => {
 })
 
 app.post('/verifyCookie', async (req, res) => {
-  console.log(`cookie request sent by ${req.get('Origin') || req.get('Referer') || 'unknown origin'}`);
-
   if (req.cookies['auth_token'] === undefined) {
     res.clearCookie('auth_token', { path: '/', secure: true, sameSite: 'none' });
     res.clearCookie('loggedIn', { path: '/', secure: true, sameSite: 'none' });
@@ -79,7 +73,6 @@ app.post('/verifyCookie', async (req, res) => {
     });
   }
 
-  console.log(`Auth token found : ${req.cookies['auth_token']}`)
   let userToken = req.cookies['auth_token'];
 
   let userData = Verify_Key(userToken);
@@ -120,7 +113,6 @@ app.post('/LogOut', async (req, res) => {
 });
 
 app.post('/LogIn', async (req, res) => {
-  console.log(`Log In request sent by ${req.get('origin') || req.get('referer' || 'unkown origin')}`)
   const { idToken } = req.body;
 
   try {
@@ -133,6 +125,21 @@ app.post('/LogIn', async (req, res) => {
     }
   } catch (error) {
 
+  }
+})
+
+app.post('/blogDraft', async (req, res) => {
+  const draftBlogContent = req.body.draftBlogContent;
+  const authToken = req.cookies['auth_token']
+
+  let response = await draft({ draftBlogContent, authToken });
+
+  if (response.status === 201) {
+    res.status(201).json({message:'Draft successfully created'})
+  } else if (response.status === 409) {
+    res.status(409).json({message:'Draft already exists'})
+  } else {
+    res.status(404).json({message:'An error happened'})
   }
 })
 

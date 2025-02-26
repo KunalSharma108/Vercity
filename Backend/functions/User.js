@@ -1,5 +1,5 @@
-const admin = require("firebase-admin");
-const { validateEmail } = require("./validateEmail");
+const { admin } = require("./firebaseconfig");
+const { validateEmail } = require("./smallFunc");
 const { Create_Key } = require("./JWT_Keys");
 
 async function CreateUser({ username, email, password }) {

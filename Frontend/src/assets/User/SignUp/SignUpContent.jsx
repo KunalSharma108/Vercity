@@ -187,6 +187,7 @@ function SignUpContent() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                disabled={!canSignUp}
               />
             </div>
 
@@ -209,6 +210,7 @@ function SignUpContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={!canSignUp}
               />
             </div>
 
@@ -233,6 +235,7 @@ function SignUpContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={!canSignUp}
               />
             </div>
 
@@ -253,6 +256,7 @@ function SignUpContent() {
                 onChange={handleCheckboxChange}
                 className="w-5 h-5 text-green-500 focus:ring-green-500 border-gray-300 rounded cursor-pointer"
                 required
+                disabled={!canSignUp}
               />
               <label className="ml-3 text-lg text-gray-300">I am not a Robot.</label>
             </div>
@@ -266,7 +270,9 @@ function SignUpContent() {
             <div className="text-center">
               <button
                 className={`w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-[#2355a5] transition-colors duration-300 ${canSignUp ? '' : 'disabled:opacity-30 cursor-not-allowed'}`}
-                onClick={(e) => handleSubmit(e)}>
+                onClick={(e) => handleSubmit(e)}
+                disabled={!canSignUp}
+                >
                 Sign Up
               </button>
             </div>

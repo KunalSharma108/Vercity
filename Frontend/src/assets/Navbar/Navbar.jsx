@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faPlus, faArrowRightFromBracket, faRightToBracket, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faPlus, faArrowRightFromBracket, faRightToBracket, faUserPlus, faHouse } from '@fortawesome/free-solid-svg-icons';
 import Vercity from '../images/Vercity-logo.png'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import backendAPI from '../API/backendAPI';
 import Cookies from 'js-cookie';
 
-function Navbar({ navRef, loggedIn }) {
+function Navbar({ navRef, loggedIn, path}) {
+  const navigate = useNavigate();
   const [isFocus, setisFocus] = useState(false);
   const [shadowState, setShadowState] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,11 +48,10 @@ function Navbar({ navRef, loggedIn }) {
       if (response.status == 201) {
         Cookies.remove('loggedIn');
         Cookies.remove('auth_token');
-        window.location.reload()
+        navigate('/')
+        window.location.reload();
       } else {
         window.alert('There was a problem in trying to log out.')
-        Cookies.remove('loggedIn');
-        Cookies.remove('auth_token');
         navigate('/')
       }
     })
@@ -93,20 +93,32 @@ function Navbar({ navRef, loggedIn }) {
           {loggedIn ? (
 
             <>
-              <Link to={'/CreateBlog'} className={`text-lg text-neutral flex items-center justify-center text-center rounded-md font-Lato ${loggedIn ? 'outline outline-2 outline-primary shadow-primary hover:shadow-even-lg hover:shadow-primary transition-colors duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-3 box-border outline-offset-0' : 'cursor-not-allowed text-gray-400 pointer-events-none select-none opacity-50'}`}>
-                <FontAwesomeIcon icon={faPlus} className='mr-2 text-2xl' />
-                <div>Create Blog</div>
-              </Link>
+              {path == 'CreateBlog' ? (
+                <>
+                  <Link to={'/'} className={`text-lg text-neutral flex items-center justify-center text-center rounded-md font-Lato ${loggedIn ? 'outline outline-2 outline-primary shadow-primary hover:shadow-even-lg hover:shadow-primary transition-colors duration-300 cursor-pointer hover:bg-primary hover:text-[#1E1E2E] rounded-sm py-2 px-3 box-border outline-offset-0' : 'cursor-not-allowed text-gray-400 pointer-events-none select-none opacity-50'}`}>
+                    <FontAwesomeIcon icon={faHouse} className='mr-2 text-2xl' />
+                    <div className='text-xl'>Home</div>
+                  </Link>
+                </>
+              ) : (
+                <>
+                    <Link to={'/CreateBlog'} className={`text-lg text-neutral flex items-center justify-center text-center rounded-md font-Lato ${loggedIn ? 'outline outline-2 outline-primary shadow-primary hover:shadow-even-lg hover:shadow-primary transition-colors duration-300 cursor-pointer hover:bg-primary hover:text-[#1E1E2E] rounded-sm py-2 px-3 box-border outline-offset-0' : 'cursor-not-allowed text-gray-400 pointer-events-none select-none opacity-50'}`}>
+                    <FontAwesomeIcon icon={faPlus} className='mr-2 text-2xl' />
+                    <div>Create Blog</div>
+                  </Link>
+                </>
 
-              <div onClick={handleSignOut} className="text-lg text-neutral flex items-center justify-center text-center bg-red-500 outline outline-2 rounded-sm outline-red-500 shadow-red-500 shadow-even-sm font-Lato hover:shadow-even-lg hover:shadow-red-500 duration-300 cursor-pointer hover:bg-transparent hover:text-neutral py-2 px-3">
+              )}
+
+
+              <div onClick={handleSignOut} className="text-lg text-[#1E1E2E] flex items-center justify-center text-center bg-red-500 outline outline-2 rounded-sm outline-red-500 shadow-red-500 shadow-even-sm font-Lato hover:shadow-even-lg hover:shadow-red-500 duration-300 cursor-pointer hover:bg-transparent hover:text-neutral py-2 px-3 font-extrabold">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} className='mr-2 text-2xl' />
-                <div className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300' 
-                onClick={handleSignOut}>
+                <div className='flex items-center justify-center text-md w-full h-full hover:shadow-lg'
+                  onClick={handleSignOut}>
                   Sign Out
                 </div>
                 {/* When the user is logged in only the Sign out button along with Create Blog button is visible */}
               </div>
-
             </>
 
           ) : (
@@ -116,7 +128,7 @@ function Navbar({ navRef, loggedIn }) {
               <div className="shadow-mg">
                 <Link to={'/LogIn'} className="text-lg text-neutral flex items-center justify-center text-center outline outline-2  outline-primary shadow-primary shadow-sm font-Lato hover:shadow-even-lg hover:shadow-primary duration-300 cursor-pointer hover:bg-primary hover:text-neutral rounded-sm py-2 px-5">
                   <FontAwesomeIcon icon={faRightToBracket} className='mr-3 text-2xl' />
-                  <div className='text-neutral flex items-center justify-center text-md w-full h-full hover:shadow-lg duration-300'>Log In</div>
+                  <div className='text-neutral flex items-center justify-center text-md w-full h-full duration-300'>Log In</div>
                 </Link>
               </div>
 
