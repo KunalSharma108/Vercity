@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Sidebar({ navHeight, screenHeight }) {
+function Sidebar({ navHeight, screenHeight, index }) {
   const sidebarHeight = screenHeight - navHeight;
   const [blogs, setBlogs] = useState(null);
   const [loading, setLoading] = useState(true);

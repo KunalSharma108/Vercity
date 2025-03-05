@@ -141,7 +141,11 @@ app.post('/blogDraft', async (req, res) => {
   } else {
     res.status(404).json({message:'An error happened'})
   }
-})
+});
+
+app.post('/getDrafts', async (req, res) => {
+  const authToken = req.cookies['auth_token']
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running !`);

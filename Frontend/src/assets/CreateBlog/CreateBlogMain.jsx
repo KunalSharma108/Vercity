@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import BlogContent from './BlogContent';
 import Cookies from 'js-cookie';
 import WarningDialog from './BlogWarning';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import BlogDialog from './BlogAction';
+import axios from 'axios';
+import backendAPI from '../API/backendAPI';
 
 function CreateBlogMain({ navHeight, screenHeight }) {
   const navigate = useNavigate();
+  const { index } = useParams();
   const [isWarningDialogOpen, setWarningDialogOpen] = useState(false);
   const [isBlogDialogOpen, setBlogDialogOpen] = useState(false);
   const [typeOfBlogDialog, setTypeOfBlogDialog] = useState({});
@@ -21,8 +24,20 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       }
     };
 
+    const fetchDrafts = () => {
+      // let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
+
+      // })
+
+      console.log('fetching')
+    }
+
+    if (index !== undefined) {
+      fetchDrafts()
+    }
+
     checkLogin();
-  }, []);
+  }, [index]);
 
   const handleWarningCancel = () => {
     setWarningDialogOpen(false);
@@ -33,7 +48,7 @@ function CreateBlogMain({ navHeight, screenHeight }) {
     setWarningDialogOpen(false);
     navigate('/LogIn');
   }
-   
+
   const handleType = (payload) => {
     if (payload) {
       setTypeOfBlogDialog(payload)
@@ -52,10 +67,10 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       <BlogDialog open={isBlogDialogOpen} Type={typeOfBlogDialog} handleClose={handleDialogClose} />
       <div className="flex w-full h-fit bg-base">
         <div className="w-1/4">
-          <Sidebar navHeight={navHeight} screenHeight={screenHeight} />
+          <Sidebar navHeight={navHeight} screenHeight={screenHeight} index={index} />
         </div>
         <div className="w-3/4">
-          <BlogContent DialogType={handleType}/>
+          <BlogContent DialogType={handleType} index={index} />
         </div>
       </div>
     </div>

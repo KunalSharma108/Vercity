@@ -5,13 +5,15 @@ import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import backendAPI from '../API/backendAPI';
+import { useNavigate } from 'react-router-dom';
 
-function BlogContent({ DialogType }) {
+function BlogContent({ DialogType, index }) {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogTitleLen, setBlogTitleLen] = useState(0);
   const [isAnimation, setIsAnimation] = useState(false);
   const [blogDesc, setBlogDesc] = useState('Description of your blog...');
   const [descHTML, setDescHTML] = useState('');
+  const Navigate = useNavigate();
 
   useEffect(() => {
     if (blogTitle.trim() != '') {
@@ -41,8 +43,14 @@ function BlogContent({ DialogType }) {
     setDescHTML(value)
   };
 
-  const handleDraftView = () => {
-    alert('l')
+  const handleDraftView = (blogIndex) => {
+
+  }
+
+  const handleGoHome = () => {
+    if (confirm('Are you sure you want to leave this page?')) {
+      Navigate('/')
+    }
   }
 
   const handleSave = async () => {
@@ -68,7 +76,35 @@ function BlogContent({ DialogType }) {
       })
 
     } catch (error) {
-      console.log('error :', error.status)
+      switch (error.status) {
+        case 409:
+          DialogType(
+            {
+              heading: 'Draft Already exists!',
+              text: 'Your blog is not being saved as draft because a similiar draft already exists.',
+              clickAction: 'View Draft',
+              handleClick: handleDraftView
+            })
+          break;
+        case 404:
+          DialogType(
+            {
+              heading: 'Unexpected error!',
+              text: 'Your blog could not be saved as draft because an error occured, Please try again later.',
+              clickAction: 'Home',
+              handleClick: handleGoHome
+            })
+          break;
+        default:
+          DialogType(
+            {
+              heading: 'Unexpected error!',
+              text: 'Your blog could not be saved as draft because an error occured, Please try again later.',
+              clickAction: 'Home',
+              handleClick: handleGoHome
+            })
+          break;
+      }
     }
 
   }

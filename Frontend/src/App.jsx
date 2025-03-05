@@ -126,6 +126,17 @@ function App() {
           </div>
         )} />
 
+        <Route path='/CreateBlog/Draft/:index' element={(
+          <div className={`bg-base text-neutral h-screen`} ref={screenRef}>
+            <>
+              <Navbar navRef={navRef} loggedIn={loggedIn} path={'CreateBlog'} />
+              <div className='h-fit bg-base' style={{ paddingTop: `${navHeight}px` }}>
+                <CreateBlogMain navHeight={navHeight} screenHeight={screenHeight} />
+              </div>
+            </>
+          </div>
+        )} />
+
       </Routes>
     </Router>
   );

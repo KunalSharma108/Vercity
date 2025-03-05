@@ -1,6 +1,8 @@
 const { admin } = require("./firebaseconfig");
 const { validateEmail } = require("./smallFunc");
 const { Create_Key } = require("./JWT_Keys");
+const { db } = require("./firebaseconfig");
+const { encodeToBase64 } = require("./smallFunc");
 
 async function CreateUser({ username, email, password }) {
   if (
@@ -19,9 +21,11 @@ async function CreateUser({ username, email, password }) {
         displayName: username,
       });
 
-      console.log(`User Created: ${email}`);
+      const UID = result.uid;
+      const encodedUID = encodeToBase64(UID);
+      const userRef = db.ref(`${encodedUID}/profile`);
 
-      const UID = result.uid
+      await userRef.set({'Email': email, 'Username': username});
 
       const payload = {
         uid: UID,
@@ -33,22 +37,15 @@ async function CreateUser({ username, email, password }) {
       return { valid: true, error: false, message: 'User created successfully', token: token };
     } catch (error) {
       if (error.code === 'auth/email-already-exists') {
-
-        console.log(`Error: Email ${email} already exists.`);
         return { valid: true, error: true, message: 'Email already exists' };
 
       } else if (error.code === 'auth/invalid-email') {
-
-        console.log(`Error: Invalid email format for ${email}.`);
         return { valid: false, error: true, message: 'Invalid email format' };
 
       } else if (error.code === 'auth/weak-password') {
-
-        console.log('Error: Weak password.');
         return { valid: false, error: true, message: 'Weak password' };
 
       } else {
-        console.log(`There was an error while creating the user: ${error.message}`);
         return { valid: false, error: true, message: `Unknown error: ${error.message}` };
       }
     }
