@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Sidebar({ navHeight, screenHeight, index }) {
+function Sidebar({ navHeight, screenHeight, index, render }) {
   const sidebarHeight = screenHeight - navHeight;
   const [blogs, setBlogs] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,12 +24,16 @@ function Sidebar({ navHeight, screenHeight, index }) {
     >
       <h2 className="text-lg font-semibold mt-1 mb-4">Saved Blogs</h2>
 
-      {loading ? (
+      {render == false ? (
         <div className="flex justify-center items-center h-32">
           <div className="loader"></div>
         </div>
+      ) : loading ? (
+          <div className="flex justify-center items-center h-32">
+            <div className="loader"></div>
+          </div>
       ) : (
-        showBlogs && (
+        showBlogs && render && (
           <ul className="space-y-2">
             {blogs.map((blog, index) => (
               <li

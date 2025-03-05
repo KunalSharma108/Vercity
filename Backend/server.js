@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
-const { draft } = require('./functions/blogFunc');
+const { saveDraft, getDrafts } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
 
 app.use(cors({
@@ -132,19 +132,30 @@ app.post('/blogDraft', async (req, res) => {
   const draftBlogContent = req.body.draftBlogContent;
   const authToken = req.cookies['auth_token']
 
-  let response = await draft({ draftBlogContent, authToken });
+  let response = await saveDraft({ draftBlogContent, authToken });
 
   if (response.status === 201) {
-    res.status(201).json({message:'Draft successfully created'})
+    res.status(201).json({ message: 'Draft successfully created' })
   } else if (response.status === 409) {
-    res.status(409).json({message:'Draft already exists'})
+    res.status(409).json({ message: 'Draft already exists' })
   } else {
-    res.status(404).json({message:'An error happened'})
+    res.status(404).json({ message: 'An error happened' })
   }
 });
 
 app.post('/getDrafts', async (req, res) => {
-  const authToken = req.cookies['auth_token']
+  const authToken = req.cookies['auth_token'];
+
+  let response = await getDrafts({ authToken });
+
+  if (response.status === 201) {
+    res.status(201).json({ data: response.data })
+  } else if (response.status === 409) {
+    res.status(409)
+  } else {
+    res.status(404)
+  }
+
 });
 
 app.listen(PORT, () => {

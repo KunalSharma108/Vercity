@@ -14,6 +14,7 @@ function CreateBlogMain({ navHeight, screenHeight }) {
   const [isWarningDialogOpen, setWarningDialogOpen] = useState(false);
   const [isBlogDialogOpen, setBlogDialogOpen] = useState(false);
   const [typeOfBlogDialog, setTypeOfBlogDialog] = useState({});
+  const [render, setRender] = useState(false)
 
   useEffect(() => {
     const checkLogin = () => {
@@ -24,16 +25,24 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       }
     };
 
-    const fetchDrafts = () => {
-      // let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
-
-      // })
-
-      console.log('fetching')
+    try {
+      const fetchDrafts = () => {
+        let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
+          console.log(res.data)
+        })
+      }
+    } catch (error) {
+      switch (error) {
+        case 409:
+          // TODO: Too tired to do the shit rn, will do it later.
+      }
     }
+
 
     if (index !== undefined) {
       fetchDrafts()
+    } else {
+      setRender(true)
     }
 
     checkLogin();
@@ -67,10 +76,10 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       <BlogDialog open={isBlogDialogOpen} Type={typeOfBlogDialog} handleClose={handleDialogClose} />
       <div className="flex w-full h-fit bg-base">
         <div className="w-1/4">
-          <Sidebar navHeight={navHeight} screenHeight={screenHeight} index={index} />
+          <Sidebar navHeight={navHeight} screenHeight={screenHeight} index={index} render={render} />
         </div>
         <div className="w-3/4">
-          <BlogContent DialogType={handleType} index={index} />
+          <BlogContent DialogType={handleType} index={index} render={render} />
         </div>
       </div>
     </div>

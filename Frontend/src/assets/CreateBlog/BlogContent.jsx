@@ -7,7 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import backendAPI from '../API/backendAPI';
 import { useNavigate } from 'react-router-dom';
 
-function BlogContent({ DialogType, index }) {
+function BlogContent({ DialogType, index, render }) {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogTitleLen, setBlogTitleLen] = useState(0);
   const [isAnimation, setIsAnimation] = useState(false);
@@ -115,52 +115,59 @@ function BlogContent({ DialogType, index }) {
 
 
   return (
-    <div className="w-full h-fit flex flex-col items-center py-3 overflow-hidden mt-1">
-      <div className="font-bold text-[30px] text-neutral font-Ubuntu">Create Blog</div>
-      <div className="w-full h-fit py-2 flex justify-center items-center">
-        <div
-          className={`w-2/3 bg-[#33334d] text-neutral h-[100px] text-lg rounded-md border border-[#a6a6ff] shadow-gray-900 shadow-even-lg focus:outline-none border-x-2 border-y-2 resize-none duration-300 pb-2 ${isAnimation ? 'animate-Shake' : ''}`}
-        >
-
-          <textarea
-            type="text"
-            className="w-full h-full font-Lato border-none outline-none focus:outline-none bg-transparent text-top align-text-top pl-4 resize-none px-2 pt-2 tracking-wide box-border overflow-auto"
-            placeholder="Title..."
-            value={blogTitle}
-            onChange={handleBlogTitleChange}
-          />
-
-          <p className="text-neutral font-normal font-sans text-xs flex justify-end align-middle mt-2 pr-1">
-            {blogTitleLen}/150
-          </p>
+    <>
+      {render == false ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <div className="loader"></div>
         </div>
-      </div>
-      <div className="w-2/3 text-neutral mt-9">
-        <ReactQuill
-          className="custom-quill"
-          value={blogDesc}
-          onChange={handleBlogDescChange}
-          theme='snow'
-        />
-      </div>
-      <div className="flex justify-start mt-6">
+      ) : (
+        <div className="w-full h-fit flex flex-col items-center py-3 overflow-hidden mt-1">
+          <div className="font-bold text-[30px] text-neutral font-Ubuntu">Create Blog</div>
+          <div className="w-full h-fit py-2 flex justify-center items-center">
+            <div
+              className={`w-2/3 bg-[#33334d] text-neutral h-[100px] text-lg rounded-md border border-[#a6a6ff] shadow-gray-900 shadow-even-lg focus:outline-none border-x-2 border-y-2 resize-none duration-300 pb-2 ${isAnimation ? 'animate-Shake' : ''}`}
+            >
 
-        <button className="w-fit h-fit mr-5 bg-white bg-opacity-30 px-5 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ffffff63] text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
-          onClick={handleSave}
-        >
-          <FontAwesomeIcon icon={faBoxArchive} className='mr-3 text-2xl' />
-          Save as draft
-        </button>
+              <textarea
+                type="text"
+                className="w-full h-full font-Lato border-none outline-none focus:outline-none bg-transparent text-top align-text-top pl-4 resize-none px-2 pt-2 tracking-wide box-border overflow-auto"
+                placeholder="Title..."
+                value={blogTitle}
+                onChange={handleBlogTitleChange}
+              />
 
-        <button className="w-fit h-fit px-5 bg-success bg-opacity-90 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-success text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
-          onClick={handleUpload}
-        >
-          Upload Blog
-          <FontAwesomeIcon icon={faUpload} className='ml-3 text-2xl' />
-        </button>
-      </div>
-    </div>
+              <p className="text-neutral font-normal font-sans text-xs flex justify-end align-middle mt-2 pr-1">
+                {blogTitleLen}/150
+              </p>
+            </div>
+          </div>
+          <div className="w-2/3 text-neutral mt-9">
+            <ReactQuill
+              className="custom-quill"
+              value={blogDesc}
+              onChange={handleBlogDescChange}
+              theme='snow'
+            />
+          </div>
+          <div className="flex justify-start mt-6">
 
+            <button className="w-fit h-fit mr-5 bg-white bg-opacity-30 px-5 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ffffff63] text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
+              onClick={handleSave}
+            >
+              <FontAwesomeIcon icon={faBoxArchive} className='mr-3 text-2xl' />
+              Save as draft
+            </button>
+
+            <button className="w-fit h-fit px-5 bg-success bg-opacity-90 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-success text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
+              onClick={handleUpload}
+            >
+              Upload Blog
+              <FontAwesomeIcon icon={faUpload} className='ml-3 text-2xl' />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

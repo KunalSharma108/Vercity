@@ -26,6 +26,7 @@ function SignUp() {
   const handleCloseDialog = () => {
     setDialogOpen(false);
     navigate('/');
+    window.location.reload();
   };
 
   const handleLogout = async () => {
