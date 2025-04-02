@@ -1,22 +1,42 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
+import backendAPI from "../API/backendAPI";
+import { useNavigate } from "react-router-dom";
 
-function Sidebar({ navHeight, screenHeight, index, render }) {
+function Sidebar({ navHeight, screenHeight, Index, render }) {
+  const navigate = useNavigate();
   const sidebarHeight = screenHeight - navHeight;
   const [blogs, setBlogs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showBlogs, setShowBlogs] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      setBlogs(["Blog 1", "Blog 2", "Blog 3", "Blog 4", "Blog 5", "Blog 6"]); // Replace with API response
-      setLoading(false);
-
-      setTimeout(() => {
-        setShowBlogs(true);
-      }, 500);
-    }, 2000);
+    const fetchDrafts = () => {
+      try {
+        let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
+          setBlogs(res.data.drafts)
+          console.log(blogs)
+          setTimeout(() => {
+            setLoading(false);
+            setShowBlogs(true);
+          }, 500);
+        })
+      } catch (error) {
+        switch (error) {
+          case 409:
+           console.log('Unable to fetch drafts')
+        }
+      }
+    }    
+    fetchDrafts();
   }, []);
 
+  const handleDraftClick = (index) => {
+    navigate(`/CreateBlog/draft/${index}`);
+    window.location.reload();
+  }
+
+  console.log(Index)
 
   return (
     <div className={`w-full bg-darkerBase text-white p-4 border-r border-gray-700 shadow-even-lg overflow-y-auto custom-scrollbar`}
@@ -38,9 +58,10 @@ function Sidebar({ navHeight, screenHeight, index, render }) {
             {blogs.map((blog, index) => (
               <li
                 key={index}
-                className="p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105"
+                className={`font-semibold tracking-wide capitalize p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105`}
+                onClick={() => handleDraftClick(index)}
               >
-                {blog}
+                {blog.title}
               </li>
             ))}
           </ul>

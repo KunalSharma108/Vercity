@@ -149,7 +149,7 @@ app.post('/getDrafts', async (req, res) => {
   let response = await getDrafts({ authToken });
 
   if (response.status === 201) {
-    res.status(201).json({ data: response.data })
+    res.status(201).json({ drafts: response.data })
   } else if (response.status === 409) {
     res.status(409)
   } else {

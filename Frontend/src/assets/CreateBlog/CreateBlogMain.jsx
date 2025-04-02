@@ -15,6 +15,7 @@ function CreateBlogMain({ navHeight, screenHeight }) {
   const [isBlogDialogOpen, setBlogDialogOpen] = useState(false);
   const [typeOfBlogDialog, setTypeOfBlogDialog] = useState({});
   const [render, setRender] = useState(false)
+  const [Drafts, setDrafts] = useState([])
 
   useEffect(() => {
     const checkLogin = () => {
@@ -25,19 +26,19 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       }
     };
 
-    try {
-      const fetchDrafts = () => {
+    const fetchDrafts = () => {
+      try {
         let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
-          console.log(res.data)
+          setDrafts(res.data.drafts);
+          setRender(true)
         })
-      }
-    } catch (error) {
-      switch (error) {
-        case 409:
+      } catch (error) {
+        switch (error) {
+          case 409:
           // TODO: Too tired to do the shit rn, will do it later.
+        }
       }
     }
-
 
     if (index !== undefined) {
       fetchDrafts()
@@ -68,6 +69,7 @@ function CreateBlogMain({ navHeight, screenHeight }) {
   const handleDialogClose = () => {
     setBlogDialogOpen(false)
     setTypeOfBlogDialog({})
+    window.location.reload();
   }
 
   return (
@@ -76,10 +78,10 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       <BlogDialog open={isBlogDialogOpen} Type={typeOfBlogDialog} handleClose={handleDialogClose} />
       <div className="flex w-full h-fit bg-base">
         <div className="w-1/4">
-          <Sidebar navHeight={navHeight} screenHeight={screenHeight} index={index} render={render} />
+          <Sidebar navHeight={navHeight} screenHeight={screenHeight} Index={Drafts && index ? index : ''} render={render} />
         </div>
         <div className="w-3/4">
-          <BlogContent DialogType={handleType} index={index} render={render} />
+          <BlogContent DialogType={handleType} content={Drafts && index ? Drafts[index] : ''} index={Drafts && index ? index : ''} render={render} />
         </div>
       </div>
     </div>

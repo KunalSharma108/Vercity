@@ -7,7 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import backendAPI from '../API/backendAPI';
 import { useNavigate } from 'react-router-dom';
 
-function BlogContent({ DialogType, index, render }) {
+function BlogContent({ DialogType, content, index, render }) {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogTitleLen, setBlogTitleLen] = useState(0);
   const [isAnimation, setIsAnimation] = useState(false);
@@ -113,6 +113,8 @@ function BlogContent({ DialogType, index, render }) {
 
   }
 
+  console.log(content)
+  console.log(index)
 
   return (
     <>

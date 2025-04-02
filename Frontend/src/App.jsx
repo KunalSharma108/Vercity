@@ -9,7 +9,6 @@ const SignUp = lazy(() => import('./assets/User/SignUp/SignUp'));
 const LogIn = lazy(() => import('./assets/User/LogIn/logIn'));
 const MainContent = lazy(() => import('./assets/content/MainContent'));
 import CreateBlogMain from './assets/CreateBlog/CreateBlogMain';
-// const CreateBlogMain = lazy(() => import('./assets/CreateBlog/CreateBlogMain'))
 import Cookies from 'js-cookie';
 import React from 'react';
 
@@ -64,16 +63,12 @@ function App() {
       handleResize();
     }, 20);
 
-    // Cleanup function to clear the interval
-    // return () => clearInterval(intervalId);
-
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
       clearInterval(intervalId);
     }
 
-  }, [navRef, location.pathname]); // Only run on mount/unmount
+  }, [navRef, location.pathname]); 
 
   return (
     <Router>
@@ -145,3 +140,6 @@ function App() {
 export default App;
 
 // TODO: implement Create blog page
+
+// create a design from which the user will know which draft they are viewing (kind of a equipped draft etc)
+// Make a way by which you can give the content of title and desc of blog to blogContent.jsx file and prefill it and then when the person clicks on update draft instead of save blog as draft, it should actually update the draft , possibly it will require the index to be sent to backend too. IDK when i will return writing this so i dont forget what i needed to do.
