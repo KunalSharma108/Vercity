@@ -11,6 +11,7 @@ function Verify_Key(token) {
     const decoded = jwt.verify(token, JWT_KEY);
     return { valid: true, payload: decoded };
   } catch (error) {
+    console.log(error)
     return { valid: false, error: error.message };
   }
 }

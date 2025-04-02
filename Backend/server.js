@@ -145,7 +145,6 @@ app.post('/blogDraft', async (req, res) => {
 
 app.post('/getDrafts', async (req, res) => {
   const authToken = req.cookies['auth_token'];
-
   let response = await getDrafts({ authToken });
 
   if (response.status === 201) {

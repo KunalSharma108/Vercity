@@ -14,6 +14,7 @@ function BlogContent({ DialogType, content, index, render }) {
   const [blogDesc, setBlogDesc] = useState('Description of your blog...');
   const [descHTML, setDescHTML] = useState('');
   const Navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (blogTitle.trim() != '') {
@@ -21,7 +22,16 @@ function BlogContent({ DialogType, content, index, render }) {
     } else {
       document.title = 'Vercity'
     }
-  }, [blogTitle])
+
+    const updateDraftContent = () => {
+      if (content && index) {
+        setBlogTitle(content.title);
+        setBlogDesc(content.descHTML);
+      }
+    }
+
+    updateDraftContent();
+  }, [blogTitle, content, index]);
 
   const handleBlogTitleChange = (e) => {
     const value = e.target.value;
@@ -37,6 +47,7 @@ function BlogContent({ DialogType, content, index, render }) {
       setBlogTitleLen(value.length);
     }
   };
+
   const handleBlogDescChange = (value, delta, source, editor) => {
     const textContent = editor.getContents();
     setBlogDesc(textContent);
@@ -109,13 +120,14 @@ function BlogContent({ DialogType, content, index, render }) {
 
   }
 
+  const handleUpdate = () => {
+    alert('Handle update clicked');
+  }
+
   const handleUpload = () => {
 
   }
-
-  console.log(content)
-  console.log(index)
-
+  
   return (
     <>
       {render == false ? (
@@ -153,12 +165,23 @@ function BlogContent({ DialogType, content, index, render }) {
           </div>
           <div className="flex justify-start mt-6">
 
-            <button className="w-fit h-fit mr-5 bg-white bg-opacity-30 px-5 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ffffff63] text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
-              onClick={handleSave}
-            >
-              <FontAwesomeIcon icon={faBoxArchive} className='mr-3 text-2xl' />
-              Save as draft
-            </button>
+            {
+              content && index ? (
+                <button className="w-fit h-fit mr-5 bg-white bg-opacity-30 px-5 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ffffff63] text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
+                  onClick={handleUpdate}
+                >
+                  <FontAwesomeIcon icon={faBoxArchive} className='mr-3 text-2xl' />
+                  Update Draft
+                </button>
+              ) : (
+                <button className="w-fit h-fit mr-5 bg-white bg-opacity-30 px-5 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ffffff63] text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
+                  onClick={handleSave}
+                >
+                  <FontAwesomeIcon icon={faBoxArchive} className='mr-3 text-2xl' />
+                  Save as draft
+                </button>
+              )
+            }
 
             <button className="w-fit h-fit px-5 bg-success bg-opacity-90 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-success text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
               onClick={handleUpload}

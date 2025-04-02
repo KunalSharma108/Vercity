@@ -22,7 +22,6 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       let loggedIn = Cookies.get('loggedIn');
       if (!loggedIn) {
         setWarningDialogOpen(true);
-        console.log('not logged in ')
       }
     };
 
@@ -31,19 +30,21 @@ function CreateBlogMain({ navHeight, screenHeight }) {
         let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
           setDrafts(res.data.drafts);
           setRender(true)
-        })
+        });
       } catch (error) {
         switch (error) {
           case 409:
-          // TODO: Too tired to do the shit rn, will do it later.
+          alert('Unable to fetch drafts, pls try again later');
         }
       }
     }
 
-    if (index !== undefined) {
-      fetchDrafts()
+    if (index) {
+      fetchDrafts();
     } else {
-      setRender(true)
+      setTimeout(() => {
+        setRender(true)
+      }, 300);
     }
 
     checkLogin();
@@ -78,10 +79,10 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       <BlogDialog open={isBlogDialogOpen} Type={typeOfBlogDialog} handleClose={handleDialogClose} />
       <div className="flex w-full h-fit bg-base">
         <div className="w-1/4">
-          <Sidebar navHeight={navHeight} screenHeight={screenHeight} Index={Drafts && index ? index : ''} render={render} />
+          <Sidebar navHeight={navHeight} screenHeight={screenHeight} Index={Drafts && index ? index : false} render={render} />
         </div>
         <div className="w-3/4">
-          <BlogContent DialogType={handleType} content={Drafts && index ? Drafts[index] : ''} index={Drafts && index ? index : ''} render={render} />
+          <BlogContent DialogType={handleType} content={Drafts && index ? Drafts[index] : false} index={Drafts && index ? index : false} render={render} />
         </div>
       </div>
     </div>
