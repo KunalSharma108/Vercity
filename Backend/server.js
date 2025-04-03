@@ -151,7 +151,7 @@ app.post('/getDrafts', async (req, res) => {
     res.status(201).json({ drafts: response.data })
   } else if (response.status == 409) {
     console.log('got')
-    res.status(409);
+    return res.status(409).json({msg: 'Drafts doesnt exist'});
   } else if (response.status == 401) {
     res.status(401);
   }
