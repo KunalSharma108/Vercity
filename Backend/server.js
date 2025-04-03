@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
-const { saveDraft, getDrafts } = require('./functions/blogFunc');
+const { saveDraft, getDrafts, deleteDrafts } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
 
 app.use(cors({
@@ -147,15 +147,31 @@ app.post('/getDrafts', async (req, res) => {
   const authToken = req.cookies['auth_token'];
   let response = await getDrafts({ authToken });
 
-  if (response.status === 201) {
+  if (response.status == 201) {
     res.status(201).json({ drafts: response.data })
-  } else if (response.status === 409) {
-    res.status(409)
-  } else {
-    res.status(404)
+  } else if (response.status == 409) {
+    console.log('got')
+    res.status(409);
+  } else if (response.status == 401) {
+    res.status(401);
   }
 
 });
+
+app.post('/DeleteDraft', async (req, res) => {
+  const authToken = req.cookies['auth_token'];
+  const Index = req.body.Index;
+
+  let response = await deleteDrafts({index:Index, authToken:authToken});
+
+  if (response.status == 201) {
+    res.status(201).json({data: 'Done'});
+  } else if (response.status == 404) {
+    res.status(404);
+  } else {
+    res.status(404);
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running !`);

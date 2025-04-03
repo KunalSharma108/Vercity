@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import BlogContent from './BlogContent';
 import Cookies from 'js-cookie';
 import WarningDialog from './BlogWarning';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import BlogDialog from './BlogAction';
 import axios from 'axios';
@@ -28,14 +28,27 @@ function CreateBlogMain({ navHeight, screenHeight }) {
     const fetchDrafts = () => {
       try {
         let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
+          if (res.status == 401) {
+            alert('The draft doesnt exist');
+            Navigate('/CreateBlog');
+          } else if (res.status == 409) {
+            alert('The draft doesnt exist');
+            Navigate('/CreateBlog')
+          }
+
           setDrafts(res.data.drafts);
           setRender(true)
         });
       } catch (error) {
+        alert('There was an error');
+        Navigate('/CreateBlog')
         switch (error) {
           case 409:
           alert('Unable to fetch drafts, pls try again later');
-        }
+          
+          default:
+            alert('There was an error fetching');
+        } 
       }
     }
 

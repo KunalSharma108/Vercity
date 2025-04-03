@@ -138,3 +138,9 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+// create a way from which if the drafts dont exist it will show a default text of "No drafts"

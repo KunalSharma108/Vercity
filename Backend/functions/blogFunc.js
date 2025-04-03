@@ -26,6 +26,8 @@ async function saveDraft({ draftBlogContent, authToken }) {
       const index = snapData.length - 1
       await userRef.set(snapData);
       return { status: 201, index: index };
+    } else if (!snapshots.exists()) {
+      return {status: 401}
     } else {
       await userRef.set([draftBlogContent]);
       return { status: 201, index: 0 };
@@ -44,8 +46,9 @@ async function getDrafts({ authToken }) {
     let snapshots = await userRef.once('value');
 
     if (!snapshots.exists()) {
-      return { status: 409 }
+      return { status: 409 };
     } else {
+      console.log('here')
       return { status: 201, data: snapshots.val() }
     }
 
@@ -55,5 +58,24 @@ async function getDrafts({ authToken }) {
   }
 }
 
+async function deleteDrafts({index, authToken}) {
+  try {
+    let user = await Verify_Key(authToken);
+    let encodedUID = encodeToBase64(user.payload.uid);
+    const userRef = db.ref(`${encodedUID}/drafts`);
+    let snapshots = await userRef.once('value');
+    let data = snapshots.val();
 
-module.exports = { saveDraft, getDrafts }
+    let newData = data.filter((value, Index) => Index !== index);
+
+
+    await userRef.set(newData);
+    return {status: 201};
+
+  } catch (error) {
+    return {status: 404};
+  }
+}
+
+
+module.exports = { saveDraft, getDrafts, deleteDrafts }
