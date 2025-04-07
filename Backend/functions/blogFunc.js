@@ -26,12 +26,12 @@ async function saveDraft({ draftBlogContent, authToken }) {
       const index = snapData.length - 1
       await userRef.set(snapData);
       return { status: 201, index: index };
+
     } else if (!snapshots.exists()) {
-      return {status: 401}
-    } else {
       await userRef.set([draftBlogContent]);
       return { status: 201, index: 0 };
     }
+
   } catch (error) {
     console.error("Error updating draft:", error);
     return { status: 500 };
@@ -46,19 +46,18 @@ async function getDrafts({ authToken }) {
     let snapshots = await userRef.once('value');
 
     if (!snapshots.exists()) {
-      return { status: 409 };
+      return { status: 404 };
     } else {
-      console.log('here')
       return { status: 201, data: snapshots.val() }
     }
 
   } catch (error) {
     console.log('There was an error', error)
-    return { status: 404 }
+    return { status: 409 }
   }
 }
 
-async function deleteDrafts({index, authToken}) {
+async function deleteDraft({ index, authToken }) {
   try {
     let user = await Verify_Key(authToken);
     let encodedUID = encodeToBase64(user.payload.uid);
@@ -70,12 +69,31 @@ async function deleteDrafts({index, authToken}) {
 
 
     await userRef.set(newData);
-    return {status: 201};
+    return { status: 201 };
 
   } catch (error) {
-    return {status: 404};
+    return { status: 404 };
+  }
+}
+
+async function updateDraft({ index, blogData, authToken }) {
+  try {
+    let user = await Verify_Key(authToken);
+    let encodedUID = encodeToBase64(user.payload.uid);
+    const userRef = db.ref(`${encodedUID}/drafts`);
+    let snapshots = await userRef.once('value');
+    let data = snapshots.val();
+
+    data[index].descHTML = blogData.descHTML;
+    data[index].title = blogData.title;
+
+    userRef.set(data);
+    return { status: 201 };
+
+  } catch (error) {
+    return { status: 404 };
   }
 }
 
 
-module.exports = { saveDraft, getDrafts, deleteDrafts }
+module.exports = { saveDraft, getDrafts, deleteDraft, updateDraft }

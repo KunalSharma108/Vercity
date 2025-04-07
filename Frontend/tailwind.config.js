@@ -3,6 +3,9 @@ module.exports = {
   content: ["./src/**/*.{html,js,jsx}"],
   theme: {
     extend: {
+      animation: {
+        wiggle: "wiggle 1s ease-in-out infinite",
+      },
       colors: {
         base: '#1E1E2E', // Dark gray for background
         primary: '#3B82F6', // Neon blue for main accents
@@ -29,9 +32,14 @@ module.exports = {
         'even-5xl': '0px 0px 40px rgba(0, 0, 0, 0.9)', // Extremely deep shadow
       },
       animation: {
-        Shake: 'shake 0.3s ease-in-out'
+        Shake: 'shake 0.3s ease-in-out',
+        'Shake-slow': 'shake 1s ease-in-out',
       },
       keyframes: {
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-6deg)" },
+          "50%": { transform: "rotate(6deg)" },
+        },
         shake: {
           '0%': { transform: 'translate(0)' },
           '10%': { transform: 'translate(-8px)', borderColor: 'red' },

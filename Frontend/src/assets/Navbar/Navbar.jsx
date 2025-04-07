@@ -63,7 +63,8 @@ function Navbar({ navRef, loggedIn, path}) {
         <img
           src={Vercity}
           alt=""
-          className='filter brightness-125 contrast-100 hover:grayscale-0 transition duration-300 h-14'
+          className='filter brightness-125 contrast-100 hover:grayscale-0 transition duration-300 h-14 cursor-pointer'
+          onClick={() => navigate('/')}
         />
       </div>
 

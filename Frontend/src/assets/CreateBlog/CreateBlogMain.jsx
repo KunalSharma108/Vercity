@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react'
 import BlogContent from './BlogContent';
 import Cookies from 'js-cookie';
 import WarningDialog from './BlogWarning';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import BlogDialog from './BlogAction';
 import axios from 'axios';
 import backendAPI from '../API/backendAPI';
 
 function CreateBlogMain({ navHeight, screenHeight }) {
+  const location = useLocation();
   const navigate = useNavigate();
   const { index } = useParams();
   const [isWarningDialogOpen, setWarningDialogOpen] = useState(false);
   const [isBlogDialogOpen, setBlogDialogOpen] = useState(false);
   const [typeOfBlogDialog, setTypeOfBlogDialog] = useState({});
-  const [render, setRender] = useState(false)
-  const [Drafts, setDrafts] = useState([])
+  const [render, setRender] = useState(false);
+  const [Drafts, setDrafts] = useState([]);
 
   useEffect(() => {
     const checkLogin = () => {
@@ -25,30 +26,34 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       }
     };
 
-    const fetchDrafts = () => {
+    const fetchDrafts = async () => {
       try {
-        let response = axios.post(`${backendAPI}/getDrafts`, {}, { withCredentials: true, timeout: 10000 }).then((res) => {
-          if (res.status == 401) {
-            alert('The draft doesnt exist');
-            Navigate('/CreateBlog');
-          } else if (res.status == 409) {
-            alert('The draft doesnt exist');
-            Navigate('/CreateBlog')
-          }
-
-          setDrafts(res.data.drafts);
-          setRender(true)
+        const res = await axios.post(`${backendAPI}/getDrafts`, {}, {
+          withCredentials: true,
+          timeout: 10000,
         });
+
+        setDrafts(res.data.drafts);
+        setRender(true);
       } catch (error) {
-        alert('There was an error');
-        Navigate('/CreateBlog')
-        switch (error) {
-          case 409:
-          alert('Unable to fetch drafts, pls try again later');
-          
-          default:
-            alert('There was an error fetching');
-        } 
+
+        if (error) {
+          const status = error.response.status;
+          if (status === 401 || status === 404) {
+            alert('The draft doesn\'t exist');
+            navigate('/CreateBlog');
+          } else {
+            alert('There was an error fetching the drafts');
+          }
+        } else if (error.code === 'ECONNABORTED') {
+          alert('Request timed out, try again later.');
+          navigate('/CreateBlog');
+        } else {
+          console.log('this one')
+          alert('Something went wrong, try again.');
+          navigate('/CreateBlog');
+        }
+        navigate('/CreateBlog');
       }
     }
 
@@ -62,6 +67,13 @@ function CreateBlogMain({ navHeight, screenHeight }) {
 
     checkLogin();
   }, [index]);
+
+  const triggerLoading = () => {
+    setRender(false);
+    setTimeout(() => {
+      setRender(true);
+    }, 300);
+  }
 
   const handleWarningCancel = () => {
     setWarningDialogOpen(false);
@@ -92,10 +104,10 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       <BlogDialog open={isBlogDialogOpen} Type={typeOfBlogDialog} handleClose={handleDialogClose} />
       <div className="flex w-full h-fit bg-base">
         <div className="w-1/4">
-          <Sidebar navHeight={navHeight} screenHeight={screenHeight} Index={Drafts && index ? index : false} render={render} />
+          <Sidebar navHeight={navHeight} DialogType={handleType} screenHeight={screenHeight} Index={Drafts && index ? index : false} render={render} triggerLoading={triggerLoading} />
         </div>
         <div className="w-3/4">
-          <BlogContent DialogType={handleType} content={Drafts && index ? Drafts[index] : false} index={Drafts && index ? index : false} render={render} />
+          <BlogContent DialogType={handleType} content={Drafts && index ? Drafts[index] : false} index={Drafts && index ? index : false} render={render} triggerLoading={triggerLoading} />
         </div>
       </div>
     </div>

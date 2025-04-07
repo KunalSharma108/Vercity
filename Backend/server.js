@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
-const { saveDraft, getDrafts, deleteDrafts } = require('./functions/blogFunc');
+const { saveDraft, getDrafts, deleteDraft, updateDraft } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
 
 app.use(cors({
@@ -130,12 +130,12 @@ app.post('/LogIn', async (req, res) => {
 
 app.post('/blogDraft', async (req, res) => {
   const draftBlogContent = req.body.draftBlogContent;
-  const authToken = req.cookies['auth_token']
+  const authToken = req.cookies['auth_token'];
 
   let response = await saveDraft({ draftBlogContent, authToken });
 
   if (response.status === 201) {
-    res.status(201).json({ message: 'Draft successfully created' })
+    res.status(201).json({ message: 'Draft successfully created', index: response.index })
   } else if (response.status === 409) {
     res.status(409).json({ message: 'Draft already exists' })
   } else {
@@ -148,12 +148,13 @@ app.post('/getDrafts', async (req, res) => {
   let response = await getDrafts({ authToken });
 
   if (response.status == 201) {
-    res.status(201).json({ drafts: response.data })
+    return res.status(201).json({ drafts: response.data })
+  } else if (response.status == 404) {
+    return res.status(404).json({ msg: 'Drafts doesnt exist', status: 404 });
   } else if (response.status == 409) {
-    console.log('got')
-    return res.status(409).json({msg: 'Drafts doesnt exist'});
-  } else if (response.status == 401) {
-    res.status(401);
+    return res.status(409).json({ msg: 'An Error occured' });
+  } else {
+    return res.status(409).json({ msg: 'An error occured' });
   }
 
 });
@@ -162,15 +163,30 @@ app.post('/DeleteDraft', async (req, res) => {
   const authToken = req.cookies['auth_token'];
   const Index = req.body.Index;
 
-  let response = await deleteDrafts({index:Index, authToken:authToken});
+  let response = await deleteDraft({ index: Index, authToken: authToken });
 
   if (response.status == 201) {
-    res.status(201).json({data: 'Done'});
+    return res.status(201).json({ data: 'Done' });
   } else if (response.status == 404) {
-    res.status(404);
+    return res.status(404).json({ data: 'An error occured' });
   } else {
-    res.status(404);
+    return res.status(404).json({ data: 'Couldnt find the draft' });
   }
+})
+
+app.post('/UpdateDraft', async (req, res) => {
+  const authToken = req.cookies['auth_token'];
+  const Index = req.body.Index;
+  const blogData = req.body.blogData;
+
+  let response = await updateDraft({ index: Index, blogData: blogData, authToken: authToken });
+
+  if (response.status === 201) {
+    return res.status(201).json({ data: 'Update completed' });
+  } else {
+    return res.status(404).json({ data: 'An error occured' });
+  }
+
 })
 
 app.listen(PORT, () => {

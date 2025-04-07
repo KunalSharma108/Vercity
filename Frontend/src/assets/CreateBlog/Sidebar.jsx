@@ -3,15 +3,16 @@ import React, { useState, useEffect } from "react";
 import backendAPI from "../API/backendAPI";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navigate, useNavigate } from "react-router-dom";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faFileAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 
-function Sidebar({ navHeight, screenHeight, Index, render }) {
+function Sidebar({ navHeight, screenHeight, Index, render, triggerLoading, DialogType }) {
   const navigate = useNavigate();
   const sidebarHeight = screenHeight - navHeight;
   const [blogs, setBlogs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showBlogs, setShowBlogs] = useState(false);
+  const [noDrafts, setNoDrafts] = useState(false);
 
   useEffect(() => {
     const fetchDrafts = () => {
@@ -22,12 +23,14 @@ function Sidebar({ navHeight, screenHeight, Index, render }) {
             setLoading(false);
             setShowBlogs(true);
           }, 500);
+        }).catch((err) => {
+          if (err.status == 404) {
+            setNoDrafts(true);
+            setLoading(false)
+          } else {
+          }
         })
       } catch (error) {
-        switch (error) {
-          case 409:
-            console.log('Unable to fetch drafts')
-        }
       }
     }
     fetchDrafts();
@@ -35,22 +38,30 @@ function Sidebar({ navHeight, screenHeight, Index, render }) {
 
   const handleDraftClick = (index) => {
     navigate(`/CreateBlog/draft/${index}`);
+    triggerLoading();
   }
 
   const handleDraftDelete = (index) => {
-    const agree = confirm('Are you sure you want to delete this draft?');
-    if (agree) {
+    const deleteDraft = () => {
       try {
         setLoading(true);
-        let response = axios.post(`${backendAPI}/DeleteDraft`, {Index: index}, {withCredentials: true}).then((res) => {
-          Navigate('/CreateBlog')
-        })
+        let response = axios.post(`${backendAPI}/DeleteDraft`, { Index: index }, { withCredentials: true, timeout: 10000 });
+        navigate('/CreateBlog');
+        window.location.reload();
       } catch (error) {
         console.log('There was an error :', error);
         alert('We are unable to delete the draft due to an nexpected error, pls try again later');
         window.location.reload();
       }
-    } 
+    }
+
+    DialogType({
+      heading: 'Confirm Deletion!',
+      text:'Are you sure you want to delete this draft?',
+      clickAction: 'Yes I do',
+      handleClick: deleteDraft,
+    })
+
   }
 
   return (
@@ -59,7 +70,7 @@ function Sidebar({ navHeight, screenHeight, Index, render }) {
     >
       <h2 className="text-lg font-semibold mt-1 mb-4">Saved Blogs</h2>
 
-      {render == false ? (
+      {render === false ? (
         <div className="flex justify-center items-center h-32">
           <div className="loader"></div>
         </div>
@@ -67,31 +78,42 @@ function Sidebar({ navHeight, screenHeight, Index, render }) {
         <div className="flex justify-center items-center h-32">
           <div className="loader"></div>
         </div>
-      ) : (
-        showBlogs && render && (
-          <ul className="space-y-2">
+      ) : noDrafts == true ? (
+        <div className="flex flex-col justify-center items-center h-32 bg-gray-900 text-gray-400 rounded-md p-4 shadow-md hover:animate-Shake-slow">
+          <FontAwesomeIcon
+            icon={faFileAlt}
+            className="text-5xl mb-2 opacity-50 animate-[wiggle_1s_ease-in-out_5.8]"
+          />
 
-            {blogs.map((blog, index) => (
-              <li key={index}
-                className={`flex items-center font-semibold tracking-wide capitalize p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105 ${Index && Index == index ? 'bg-secondary hover:bg-secondary' : ''}`}
-                onClick={() => handleDraftClick(index)}>
 
-                <div className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis">
-                  {blog.title}
-                </div>
+          <span className="text-lg font-semibold">No Drafts Found</span>
+        </div>
+      ) : showBlogs && render ? (
+        <ul className="space-y-2">
+          {blogs.map((blog, index) => (
+            <li
+              key={index}
+              className={`flex items-center font-semibold tracking-wide capitalize p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105 ${Index && Index === index ? "bg-secondary hover:bg-secondary" : ""
+                }`}
+              
+            >
+              <div className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis" onClick={() => handleDraftClick(index)}>
+                {blog.title}
+              </div>
+              <div
+                className="flex justify-end w-[10%]"
+                onClick={() => handleDraftDelete(index)}
+              >
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  className="hover:text-red-600 duration-200 scale-125"
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
-                <div
-                  className="flex justify-end w-[10%]"
-                  onClick={() => handleDraftDelete(index)}
-                >
-                  <FontAwesomeIcon icon={faTrash} className="hover:text-red-600 duration-200 scale-125" />
-                </div>
-              </li>
-            ))}
-
-          </ul>
-        )
-      )}
     </div>
   );
 }

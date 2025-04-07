@@ -5,24 +5,23 @@ import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import backendAPI from '../API/backendAPI';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-function BlogContent({ DialogType, content, index, render }) {
+function BlogContent({ DialogType, content, index, render, triggerLoading }) {
+  const location = useLocation();
   const [blogTitle, setBlogTitle] = useState('');
   const [blogTitleLen, setBlogTitleLen] = useState(0);
   const [isAnimation, setIsAnimation] = useState(false);
   const [blogDesc, setBlogDesc] = useState('Description of your blog...');
   const [descHTML, setDescHTML] = useState('');
   const Navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (blogTitle.trim() != '') {
-      document.title = `Vercity - ${blogTitle}`
-    } else {
-      document.title = 'Vercity'
-    }
+    setBlogDesc('Description of your blog...');
+    setBlogTitle('');
+  }, [location.pathname]);
 
+  useEffect(() => {
     const updateDraftContent = () => {
       if (content && index) {
         setBlogTitle(content.title);
@@ -31,7 +30,16 @@ function BlogContent({ DialogType, content, index, render }) {
     }
 
     updateDraftContent();
-  }, [blogTitle, content, index]);
+  }, [content, index]);
+
+  useEffect(() => {
+    if (blogTitle.trim() != '') {
+      document.title = `Vercity - ${blogTitle}`
+    } else {
+      document.title = 'Vercity'
+    }
+    
+  }, [blogTitle])
 
   const handleBlogTitleChange = (e) => {
     const value = e.target.value;
@@ -55,7 +63,8 @@ function BlogContent({ DialogType, content, index, render }) {
   };
 
   const handleDraftView = (blogIndex) => {
-
+    Navigate(`/CreateBlog/draft/${blogIndex}`);
+    window.location.reload();
   }
 
   const handleGoHome = () => {
@@ -82,7 +91,7 @@ function BlogContent({ DialogType, content, index, render }) {
             heading: 'Draft Successful!',
             text: 'Your blog has been successfully saved as a draft!',
             clickAction: 'View Draft',
-            handleClick: handleDraftView
+            handleClick: () => handleDraftView(res.data.index)
           })
       })
 
@@ -120,14 +129,20 @@ function BlogContent({ DialogType, content, index, render }) {
 
   }
 
-  const handleUpdate = () => {
-    alert('Handle update clicked');
+  const handleUpdate = (index) => {
+    console.log(index)
+    try {
+      const blogData = { title: blogTitle, descHTML: descHTML };
+      let response = axios.post(`${backendAPI}/UpdateDraft`, { Index: index, blogData: blogData }, { withCredentials: true, timeout: 10000 });
+    } catch (error) {
+
+    }
   }
 
   const handleUpload = () => {
 
   }
-  
+
   return (
     <>
       {render == false ? (
@@ -168,7 +183,7 @@ function BlogContent({ DialogType, content, index, render }) {
             {
               content && index ? (
                 <button className="w-fit h-fit mr-5 bg-white bg-opacity-30 px-5 py-3 mt-3 rounded-md cursor-pointer transform transition-all duration-300 ease-in-out hover:scale-105 hover:bg-[#ffffff63] text-neutral font-sans font-semibold tracking-wide text-[18px] focus:outline-none flex justify-center align-middle text-center"
-                  onClick={handleUpdate}
+                  onClick={() => handleUpdate(index)}
                 >
                   <FontAwesomeIcon icon={faBoxArchive} className='mr-3 text-2xl' />
                   Update Draft
