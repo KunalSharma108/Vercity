@@ -95,5 +95,37 @@ async function updateDraft({ index, blogData, authToken }) {
   }
 }
 
+async function uploadBlog({ blogData, authToken }) {
+  let user = await Verify_Key(authToken);
+  let encodedUID = encodeToBase64(user.payload.uid);
+  const publicRef = db.ref('Blogs');
+  const userRef = db.ref(`${encodedUID}/Blogs`);
 
-module.exports = { saveDraft, getDrafts, deleteDraft, updateDraft }
+  let userSanpshots = await userRef.once('value');
+  let publicSnapshots = await publicRef.once('value');
+
+  if (!userSanpshots.exists()) {
+    await userRef.set([blogData]);
+  } 
+  
+  if (userSanpshots.exists()) {
+    let data = userSanpshots.val();
+    data.push(blogData);
+    await userRef.set(data);
+  }
+
+  if (!publicSnapshots.exists()) {
+    await publicRef.set([blogData]);
+    return { status: 201, index: 0 }
+
+  } else {
+    let data = publicSnapshots.val();
+    data.push(blogData);
+    await publicRef.set(data);
+    return { status: 201, index: data.length - 1 };
+  }
+
+}
+
+
+module.exports = { saveDraft, getDrafts, deleteDraft, updateDraft, uploadBlog }

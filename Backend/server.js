@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
-const { saveDraft, getDrafts, deleteDraft, updateDraft } = require('./functions/blogFunc');
+const { saveDraft, getDrafts, deleteDraft, updateDraft, uploadBlog } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
 
 app.use(cors({
@@ -187,6 +187,19 @@ app.post('/UpdateDraft', async (req, res) => {
     return res.status(404).json({ data: 'An error occured' });
   }
 
+});
+
+app.post('/UploadBlog', async (req, res) => {
+  const authToken = req.cookies['auth_token'];
+  const blogData = req.body.blogData;
+
+  let response = await uploadBlog({blogData: blogData, authToken: authToken});
+
+  if (response.status === 201) {
+    res.status(201).json({Data:'Upload done', Index:response.index});
+  } else {
+    res.status(404).json({Data: 'An error occured!'});
+  }
 })
 
 app.listen(PORT, () => {

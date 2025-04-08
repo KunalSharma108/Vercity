@@ -12,20 +12,16 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogTitleLen, setBlogTitleLen] = useState(0);
   const [isAnimation, setIsAnimation] = useState(false);
-  const [blogDesc, setBlogDesc] = useState('Description of your blog...');
+  const [blogDesc, setBlogDesc] = useState('');
   const [descHTML, setDescHTML] = useState('');
   const Navigate = useNavigate();
-
-  useEffect(() => {
-    setBlogDesc('Description of your blog...');
-    setBlogTitle('');
-  }, [location.pathname]);
 
   useEffect(() => {
     const updateDraftContent = () => {
       if (content && index) {
         setBlogTitle(content.title);
         setBlogDesc(content.descHTML);
+        setDescHTML(content.descHTML)
       }
     }
 
@@ -38,7 +34,7 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
     } else {
       document.title = 'Vercity'
     }
-    
+
   }, [blogTitle])
 
   const handleBlogTitleChange = (e) => {
@@ -68,9 +64,7 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
   }
 
   const handleGoHome = () => {
-    if (confirm('Are you sure you want to leave this page?')) {
-      Navigate('/')
-    }
+    Navigate('/')
   }
 
   const handleSave = async () => {
@@ -130,17 +124,71 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
   }
 
   const handleUpdate = (index) => {
-    console.log(index)
     try {
       const blogData = { title: blogTitle, descHTML: descHTML };
-      let response = axios.post(`${backendAPI}/UpdateDraft`, { Index: index, blogData: blogData }, { withCredentials: true, timeout: 10000 });
+      let response = axios.post(`${backendAPI}/UpdateDraft`, { Index: index, blogData: blogData }, {
+        withCredentials: true,
+        timeout: 10000
+      }).then((res) => {
+        DialogType({
+          heading: 'Update Successful',
+          text: 'Your draft was successfuly updated',
+          clickAction: 'Home',
+          handleClick: handleGoHome
+        })
+      })
     } catch (error) {
-
+      DialogType({
+        heading: 'Update Failed!',
+        text: 'There was an error while Updating your draft.',
+        clickAction: 'Home',
+        handleClick: handleGoHome
+      })
     }
   }
 
-  const handleUpload = () => {
+  const handleViewBlog = (index) => {
+    alert(index)
+  }
 
+  const handleUpload = () => {
+    triggerLoading()
+    try {
+      const blogData = {
+        title: blogTitle,
+        descHTML: descHTML,
+        likesCount: 0,
+        usersLiked: false,
+        comments: false,
+        dislikesCount: 0,
+        usersDisliked: false,
+      };
+
+      if (blogData.title.trim() == '' || blogData.descHTML.trim() == '') {
+        return alert('Any Content of the blog cannot be empty.')
+      }
+
+      let response = axios.post(`${backendAPI}/UploadBlog`, { blogData: blogData }, {
+        withCredentials: true,
+        timeout: 30000
+      }).then((res) => {
+
+        DialogType({
+          heading: 'Upload Successful!',
+          text: 'Your Blog was successfully uploaded! Everyone can see your blog now.',
+          clickAction: 'View Blog',
+          handleClick: () => handleViewBlog(res.data.Index)
+        })
+      })
+
+    } catch (error) {
+      DialogType({
+        heading: 'Upload Failed!',
+        text: 'There was an error while uploading your blog.',
+        clickAction: 'Home',
+        handleClick: handleGoHome
+      })
+    }
   }
 
   return (
@@ -155,6 +203,7 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
           <div className="w-full h-fit py-2 flex justify-center items-center">
             <div
               className={`w-2/3 bg-[#33334d] text-neutral h-[100px] text-lg rounded-md border border-[#a6a6ff] shadow-gray-900 shadow-even-lg focus:outline-none border-x-2 border-y-2 resize-none duration-300 pb-2 ${isAnimation ? 'animate-Shake' : ''}`}
+              
             >
 
               <textarea
@@ -176,6 +225,7 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
               value={blogDesc}
               onChange={handleBlogDescChange}
               theme='snow'
+              placeholder='Description of your blog...'
             />
           </div>
           <div className="flex justify-start mt-6">

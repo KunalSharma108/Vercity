@@ -190,8 +190,9 @@ span.ql-picker-label::before:hover {
     color: red;
 }
 
-.ql-editor[data-placeholder="Description of your blog..."] {
-    color:white !important;
+.ql-editor.ql-blank[data-placeholder="Description of your blog..."]::before {
+    color:rgba(255, 255, 255, 0.545) !important;
+    font-weight: 500;
 }
 
 /* Custom Scrollbar */
