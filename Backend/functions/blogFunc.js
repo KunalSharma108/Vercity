@@ -116,7 +116,7 @@ async function uploadBlog({ blogData, authToken }) {
 
   if (!publicSnapshots.exists()) {
     await publicRef.set([blogData]);
-    return { status: 201, index: 0 }
+    return { status: 201, index: 0 };
 
   } else {
     let data = publicSnapshots.val();
