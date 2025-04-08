@@ -98,7 +98,7 @@ function Sidebar({ navHeight, screenHeight, Index, render, triggerLoading, Dialo
           {blogs.map((blog, index) => (
             <li
               key={index}
-              className={`flex items-center font-semibold tracking-wide capitalize p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105 ${Index && index === index ? "bg-secondary hover:bg-secondary" : ""
+              className={`flex items-center font-semibold tracking-wide capitalize p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105 ${Index && Index == index ? "bg-secondary hover:bg-secondary" : ""
                 }`}
 
             >
