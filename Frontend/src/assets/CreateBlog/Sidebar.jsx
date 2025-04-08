@@ -50,7 +50,6 @@ function Sidebar({ navHeight, screenHeight, Index, render, triggerLoading, Dialo
             withCredentials: true,
             timeout: 10000
           }).then((res) => {
-            console.log(res)
             navigate('/CreateBlog');
             window.location.reload();
           })
