@@ -95,7 +95,7 @@ function App() {
         } />
 
         <Route path='/SignUp' element={(
-          <div className='bg-base text-neutral w-screen h-screen'>
+          <div className='bg-base text-neutral w-screen h-screen overflow-hidden'>
             <Suspense fallback={<Loading class='startAnimation' />}>
               <SignUp />
             </Suspense>
@@ -103,7 +103,7 @@ function App() {
         )} />
 
         <Route path='/LogIn' element={(
-          <div className='bg-base text-neutral w-screen h-screen'>
+          <div className='bg-base text-neutral w-screen h-screen overflow-hidden'>
             <Suspense fallback={<Loading class='startAnimation' />}>
               <LogIn />
             </Suspense>
