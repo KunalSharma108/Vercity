@@ -45,9 +45,14 @@ function Sidebar({ navHeight, screenHeight, Index, render, triggerLoading, Dialo
     const deleteDraft = () => {
       try {
         setLoading(true);
-        let response = axios.post(`${backendAPI}/DeleteDraft`, { Index: index }, { withCredentials: true, timeout: 10000 });
-        navigate('/CreateBlog');
-        window.location.reload();
+        let response = axios.post(`${backendAPI}/DeleteDraft`, { Index: index },
+          {
+            withCredentials: true,
+            timeout: 10000
+          }).then((res) => {
+            navigate('/CreateBlog');
+            window.location.reload();
+          })
       } catch (error) {
         console.log('There was an error :', error);
         alert('We are unable to delete the draft due to an nexpected error, pls try again later');
@@ -57,7 +62,7 @@ function Sidebar({ navHeight, screenHeight, Index, render, triggerLoading, Dialo
 
     DialogType({
       heading: 'Confirm Deletion!',
-      text:'Are you sure you want to delete this draft?',
+      text: 'Are you sure you want to delete this draft?',
       clickAction: 'Yes I do',
       handleClick: deleteDraft,
     })
@@ -95,7 +100,7 @@ function Sidebar({ navHeight, screenHeight, Index, render, triggerLoading, Dialo
               key={index}
               className={`flex items-center font-semibold tracking-wide capitalize p-3 bg-gray-800 rounded-md transition-all duration-300 cursor-pointer hover:bg-gray-700 hover:scale-105 ${Index && Index == index ? "bg-secondary hover:bg-secondary" : ""
                 }`}
-              
+
             >
               <div className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis" onClick={() => handleDraftClick(index)}>
                 {blog.title}
