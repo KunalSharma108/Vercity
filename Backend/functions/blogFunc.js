@@ -103,24 +103,32 @@ async function uploadBlog({ blogData, authToken }) {
 
   let userSanpshots = await userRef.once('value');
   let publicSnapshots = await publicRef.once('value');
-
-  if (!userSanpshots.exists()) {
-    await userRef.set([blogData]);
-  } 
-  
-  if (userSanpshots.exists()) {
-    let data = userSanpshots.val();
-    data.push(blogData);
-    await userRef.set(data);
-  }
+  let Index = 0;
 
   if (!publicSnapshots.exists()) {
     await publicRef.set([blogData]);
+
+    blogData.Index = Index;
+    await userRef.set([blogData])
+
     return { status: 201, index: 0 };
 
   } else {
     let data = publicSnapshots.val();
     data.push(blogData);
+
+    Index = data.length - 1;
+    blogData.Index = Index;
+
+    if (!userSanpshots.exists()) {
+      userRef.set([blogData]);
+      
+    } else {
+      let userData = userSanpshots.val();
+      userData.push(blogData)
+      await userRef.set(userData);
+    }
+
     await publicRef.set(data);
     return { status: 201, index: data.length - 1 };
   }

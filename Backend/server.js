@@ -57,6 +57,7 @@ app.post('/SignUp', async (req, res) => {
       // Success case
       let token = result.token;
       res.cookie('auth_token', token, COOKIE_OPTIONS);
+      res.cookie('loggedIn', true, COOKIE_OPTIONS);
       res.status(201).json({ message: 'User created successfully' });  // 201 Created for successful user creation
     }
   } catch (error) {
@@ -205,8 +206,20 @@ app.post('/UploadBlog', async (req, res) => {
 
 app.post('/GetUserData', async (req, res) => { 
   const authToken = req.cookies['auth_token'];
+  if (!authToken) {
+    return res.status(404).json({data:'user not logged in'})
+  }
   let response = await getUserData({authToken: authToken});
-})
+
+  if (response.status == 201) {
+    return res.status(201).json({data: response.data});
+  } if (response.status === 404) {
+    return res.status(404).json({data: 'No data found'})
+  } else {
+    return res.status(409).json({data:'there was an error'})
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running !`);
 })

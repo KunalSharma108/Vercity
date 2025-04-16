@@ -19,13 +19,6 @@ function CreateBlogMain({ navHeight, screenHeight }) {
   const [Drafts, setDrafts] = useState([]);
 
   useEffect(() => {
-    const checkLogin = () => {
-      let loggedIn = Cookies.get('loggedIn');
-      if (!loggedIn) {
-        setWarningDialogOpen(true);
-      }
-    };
-
     const fetchDrafts = async () => {
       try {
         const res = await axios.post(`${backendAPI}/getDrafts`, {}, {
@@ -65,7 +58,6 @@ function CreateBlogMain({ navHeight, screenHeight }) {
       }, 300);
     }
 
-    checkLogin();
   }, [index]);
 
   const triggerLoading = () => {
