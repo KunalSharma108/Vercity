@@ -11,6 +11,7 @@ const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
 const { saveDraft, getDrafts, deleteDraft, updateDraft, uploadBlog } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
+const { getUserData } = require('./functions/mainFunc');
 
 app.use(cors({
   origin: ORIGIN,
@@ -193,15 +194,19 @@ app.post('/UploadBlog', async (req, res) => {
   const authToken = req.cookies['auth_token'];
   const blogData = req.body.blogData;
 
-  let response = await uploadBlog({blogData: blogData, authToken: authToken});
+  let response = await uploadBlog({ blogData: blogData, authToken: authToken });
 
   if (response.status === 201) {
-    res.status(201).json({Data:'Upload done', Index:response.index});
+    res.status(201).json({ Data: 'Upload done', Index: response.index });
   } else {
-    res.status(404).json({Data: 'An error occured!'});
+    res.status(404).json({ Data: 'An error occured!' });
   }
-})
+});
 
+app.post('/GetUserData', async (req, res) => { 
+  const authToken = req.cookies['auth_token'];
+  let response = await getUserData({authToken: authToken});
+})
 app.listen(PORT, () => {
   console.log(`Server is running !`);
 })

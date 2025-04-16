@@ -1,31 +1,23 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import backendAPI from '../API/backendAPI';
+import Sidebar from './Sidebar';
+import MiddleBar from './MiddleBar';
 
 function MainContent(height) {
-  const [data, setData] = useState(null); 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${backendAPI}`); 
-        setData(response.data); 
-      } catch (error) {
-        console.error('Error fetching data:', error); // Handle any errors
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
-    <div>
-      {data ? (
-        <h2>The result is</h2> 
-      ) : (
-        <h1>Loading......</h1>
-      )}
+    <div className={`flex mt-[${height}] w-full h-full`}>
+
+      <div className='w-1/4 h-full overflow-x-hidden overflow-y-auto'>
+        <Sidebar />
+      </div>
+
+      <div className='w-3/4 h-full overflow-x-hidden overflow-y-auto'>
+        <MiddleBar />
+      </div>
+
     </div>
+
   );
 }
 
