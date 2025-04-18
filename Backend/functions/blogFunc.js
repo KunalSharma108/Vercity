@@ -1,6 +1,6 @@
 const { db } = require("./firebaseconfig");
 const { Verify_Key } = require("./JWT_Keys");
-const { encodeToBase64 } = require("./smallFunc");
+const { encodeToBase64, getDate } = require("./smallFunc");
 
 async function saveDraft({ draftBlogContent, authToken }) {
   let user = await Verify_Key(authToken);
@@ -98,12 +98,19 @@ async function updateDraft({ index, blogData, authToken }) {
 async function uploadBlog({ blogData, authToken }) {
   let user = await Verify_Key(authToken);
   let encodedUID = encodeToBase64(user.payload.uid);
+
+  let ref = db.ref(`${encodedUID}/profile`);
+  await ref.once('value').then((snapshots) => blogData.Author = snapshots.val().Username)
+
   const publicRef = db.ref('Blogs');
   const userRef = db.ref(`${encodedUID}/Blogs`);
 
   let userSanpshots = await userRef.once('value');
   let publicSnapshots = await publicRef.once('value');
   let Index = 0;
+
+  let uploadedDate = await getDate();
+  blogData.uploadedDate = uploadedDate;
 
   if (!publicSnapshots.exists()) {
     await publicRef.set([blogData]);
@@ -122,7 +129,7 @@ async function uploadBlog({ blogData, authToken }) {
 
     if (!userSanpshots.exists()) {
       userRef.set([blogData]);
-      
+
     } else {
       let userData = userSanpshots.val();
       userData.push(blogData)

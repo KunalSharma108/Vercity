@@ -11,7 +11,7 @@ const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
 const { saveDraft, getDrafts, deleteDraft, updateDraft, uploadBlog } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
-const { getUserData } = require('./functions/mainFunc');
+const { getUserData, getBlogs } = require('./functions/mainFunc');
 
 app.use(cors({
   origin: ORIGIN,
@@ -79,7 +79,7 @@ app.post('/verifyCookie', async (req, res) => {
 
   let userData = Verify_Key(userToken);
   if (!userData.valid) {
-    res.clearCookie('auth_token');
+    res.clearCookie('auth_token', { path: '/', secure: true, sameSite: 'none' });
     return res.status(400).send({
       error: 'Invalid token',
     });
@@ -99,8 +99,8 @@ app.post('/verifyCookie', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching user data:', error);
-    res.clearCookie('auth_token', COOKIE_OPTIONS);
-    res.clearCookie('loggedIn', COOKIE_OPTIONS);
+    res.clearCookie('auth_token', { path: '/', secure: true, sameSite: 'none' });
+    res.clearCookie('loggedIn', { path: '/', secure: true, sameSite: 'none' });
     res.status(404).send({
       error: 'User not found',
       loggedIn: false
@@ -204,22 +204,37 @@ app.post('/UploadBlog', async (req, res) => {
   }
 });
 
-app.post('/GetUserData', async (req, res) => { 
+app.post('/GetUserData', async (req, res) => {
   const authToken = req.cookies['auth_token'];
   if (!authToken) {
-    return res.status(404).json({data:'user not logged in'})
+    return res.status(404).json({ data: 'user not logged in' })
   }
-  let response = await getUserData({authToken: authToken});
+
+  let response = await getUserData({ authToken: authToken });
 
   if (response.status == 201) {
-    return res.status(201).json({data: response.data});
+    return res.status(201).json({ data: response.data });
   } if (response.status === 404) {
-    return res.status(404).json({data: 'No data found'})
+    return res.status(404).json({ data: 'No data found' })
   } else {
-    return res.status(409).json({data:'there was an error'})
+    return res.status(409).json({ data: 'there was an error' })
   }
 });
 
+app.post('/GetBlogs', async (req, res) => {
+  const authToken = req.cookies['auth_token'];
+  const ID = req.body.ID;
+  let response = await getBlogs({ ID: ID, authToken: authToken });
+
+  if (response.status == 201) {
+    return res.status(201).json({ data: response.data });
+  } else if (response.status == 404) {
+    return res.status(404).json({ data: response.data, msg: 'No more blogs left to fetch, Repeating the old ones' })
+  } else {
+    return res.status(409).json({ msg: 'There was an unexpected error.' })
+  }
+})
+
 app.listen(PORT, () => {
-  console.log(`Server is running !`);
+  console.log(`Server is running on ${PORT}!`);
 })
