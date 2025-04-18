@@ -99,7 +99,7 @@ function MiddleBar() {
         Observe.unobserve(divRef.current)
       }
     }
-  }, [])
+  }, [blogContent])
 
   return (
     <div className='w-full h-full p-2'>
