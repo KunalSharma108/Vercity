@@ -38,12 +38,16 @@ async function getBlogs({ ID, authToken }) {
   } else if (typeof ID === "number") {
     const snapshots = await blogsRef.orderByChild('Index').startAfter(ID).limitToFirst(10).once('value');
     if (snapshots.exists()) {
-      let user = await Verify_Key(authToken);
-      let encodedUID = encodeToBase64(user.payload.uid);
-      const userRef = db.ref(`${encodedUID}/profile`);
+      if (authToken) {
+        let user = await Verify_Key(authToken);
+        let encodedUID = encodeToBase64(user.payload.uid);
+        const userRef = db.ref(`${encodedUID}/profile`);
 
-      await userRef.set({lastSeenIndex: ID});
-      return { status: 201, data: snapshots.val() }
+        await userRef.set({ lastSeenIndex: ID });
+        return { status: 201, data: snapshots.val() }
+      } else {
+        return { status: 201, data: snapshots.val() }
+      }
     } else {
       return { status: 404, data: 'No more blogs' }
     }

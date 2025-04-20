@@ -20,7 +20,6 @@ function Sidebar() {
         });
         setData(response.data.data);
       } catch (error) {
-        console.log('thissssss', error.response?.status);
         if (error.response?.status === 404) {
           setData(false);
         } else {

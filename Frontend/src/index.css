@@ -153,20 +153,21 @@ textarea::-webkit-scrollbar-track {
     stroke: white !important;
 }
 
-.ql-snow svg:hover .ql-stroke, .ql-snow svg:hover .ql-fill {
-    stroke:#14B8A6 !important;
+.ql-snow svg:hover .ql-stroke,
+.ql-snow svg:hover .ql-fill {
+    stroke: #14B8A6 !important;
 }
 
-.ql-picker:hover .ql-picker-label{
-    color:#14B8A6 !important;
+.ql-picker:hover .ql-picker-label {
+    color: #14B8A6 !important;
 }
 
- .ql-picker:hover span svg .ql-stroke {
-    stroke:#14B8A6;
- }
+.ql-picker:hover span svg .ql-stroke {
+    stroke: #14B8A6;
+}
 
 .ql-picker-options .ql-picker-item {
-    color:black;
+    color: black;
 }
 
 .ql-snow .ql-picke1r.ql-header {
@@ -182,7 +183,7 @@ textarea::-webkit-scrollbar-track {
 }
 
 span.ql-picker-label::before:hover {
-    color:#14B8A6;
+    color: #14B8A6;
 }
 
 .ql-snow .ql-stroke:hover {
@@ -191,7 +192,7 @@ span.ql-picker-label::before:hover {
 }
 
 .ql-editor.ql-blank[data-placeholder="Description of your blog..."]::before {
-    color:rgba(255, 255, 255, 0.545) !important;
+    color: rgba(255, 255, 255, 0.545) !important;
     font-weight: 500;
 }
 
@@ -232,4 +233,30 @@ span.ql-picker-label::before:hover {
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* Scrollbar for modern browsers */
+::-webkit-scrollbar {
+    width: 12px;
+    /* Thickness */
+    height: 12px;
+    /* Thickness */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(204, 204, 204, 0.2);
+    /* Dark track with opacity */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.7);
+    /* White with opacity */
+    border-radius: 10px;
+    border: 2px solid rgba(204, 204, 204, 0.2);
+    /* Optional: gives a small border effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.9);
+    /* Slightly brighter when hovering */
 }

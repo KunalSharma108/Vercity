@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import backendAPI from '../API/backendAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
@@ -9,37 +9,40 @@ function MiddleBar() {
   const [blogContent, setBlogContent] = useState([]);
   const [repeat, setRepeat] = useState(false);
   const [loading, setLoading] = useState(true);
-  const divRef = useRef(null);
   const [furtherLoading, setFurtherLoading] = useState(false);
+  const [lastFetchTime, setLastFetchTime] = useState(0);
 
   const fetchMoreBlogs = async () => {
-    try {
-      setFurtherLoading(true)
-      const response = await axios.post(`${backendAPI}/GetBlogs`, { ID: blogId }, {
-        withCredentials: true,
-        timeout: 100000,
-      }).then((res) => {
-        setBlogId(res.data.data[res.data.data.length - 1].Index);
-        setBlogContent(blogContent => [...blogContent, res.data.data]);
-        setLoading(false)
-      })
-    } catch (error) {
-      if (error.response) {
-        switch (error.response.status) {
-          case 404:
-            setRepeat(true);
-            console.log('Repeating the old ones.');
-            alert(error.response.msg);
-            break;
-          case 409:
-            console.log('A conflict error happened.');
-            break;
-          default:
-            console.log('An unexpected server error.');
-            break;
+    const Now = Date.now();
+    if (Now - lastFetchTime < 5000) {
+      return alert('You are scrolling too fast.')
+    } else {
+      setLastFetchTime(Now)
+      try {
+        console.log(blogId)
+        const response = await axios.post(`${backendAPI}/GetBlogs`, { ID: blogId }, {
+          withCredentials: true,
+          timeout: 100000,
+        }).then((res) => {
+          let lastKey = Math.max(...Object.keys(res.data.data));
+          setBlogId(lastKey);
+          setBlogContent(blogContent => [...blogContent, ...Object.values(res.data.data)]);
+          setFurtherLoading(false)
+        })
+      } catch (error) {
+        if (error.response) {
+          switch (error.response.status) {
+            case 404:
+              setRepeat(true);
+              break;
+            case 409:
+              break;
+            default:
+              break;
+          }
+        } else {
+          console.log(error);
         }
-      } else {
-        console.log(error);
       }
     }
   }
@@ -79,27 +82,24 @@ function MiddleBar() {
     fetchBlogs();
 
   }, []);
+  const observerRef = useRef();
 
-  useEffect(() => {
-    const Observe = new IntersectionObserver(([entry]) => {
+  const divRef = useCallback((node) => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        fetchMoreBlogs();
+        if (furtherLoading === false) {
+          setFurtherLoading(true)
+          fetchMoreBlogs();
+        }
       }
     }, {
-      threshold: 0.1
+      threshold: 0.1 
     });
 
-    if (divRef.current) {
-      Observe.observe(divRef.current)
-    };
-
-
-    return () => {
-      if (divRef.current) {
-        Observe.unobserve(divRef.current)
-      }
-    }
-  }, [blogContent])
+    if (node) observerRef.current.observe(node);
+  }, [blogContent, blogId]);
 
   return (
     <div className='w-full h-full p-2'>
@@ -152,8 +152,3 @@ function MiddleBar() {
 }
 
 export default MiddleBar
-
-
-
-
-// So the ref is not working unless that div is visible and you make a change in the code, related to refs. and you gotta see this firebase warnign and stuff, idk man fix the ref first.
