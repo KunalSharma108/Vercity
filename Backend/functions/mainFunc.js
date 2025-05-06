@@ -31,19 +31,21 @@ async function getBlogs({ ID, authToken }) {
       const snapshots = await blogsRef.orderByKey().limitToFirst(10).once('value');
       if (snapshots.exists()) {
         return { status: 201, data: snapshots.val() }
+      } else if (!snapshots.exists()) {
+        return {status: 404, data:'not found'}
       }
     } catch (error) {
       return { status: 409, data: 'There was an unexpected error' }
     }
-  } else if (typeof ID === "number") {
-    const snapshots = await blogsRef.orderByChild('Index').startAfter(ID).limitToFirst(10).once('value');
+  } else {
+    const snapshots = await blogsRef.orderByKey().startAfter(ID).limitToFirst(10).once('value');
     if (snapshots.exists()) {
       if (authToken) {
         let user = await Verify_Key(authToken);
         let encodedUID = encodeToBase64(user.payload.uid);
         const userRef = db.ref(`${encodedUID}/profile`);
 
-        await userRef.set({ lastSeenIndex: ID });
+        await userRef.update({ lastSeenIndex: ID });
         return { status: 201, data: snapshots.val() }
       } else {
         return { status: 201, data: snapshots.val() }

@@ -100,44 +100,23 @@ async function uploadBlog({ blogData, authToken }) {
   let encodedUID = encodeToBase64(user.payload.uid);
 
   let ref = db.ref(`${encodedUID}/profile`);
-  await ref.once('value').then((snapshots) => blogData.Author = snapshots.val().Username)
+  await ref.once('value').then((snapshots) => blogData.Author = snapshots.val().Username);
+  try {
+    blogData.date = getDate();
 
-  const publicRef = db.ref('Blogs');
-  const userRef = db.ref(`${encodedUID}/Blogs`);
+    const publicRef = db.ref('Blogs');
+    const userRef = db.ref(`${encodedUID}/Blogs`);
 
-  let userSanpshots = await userRef.once('value');
-  let publicSnapshots = await publicRef.once('value');
-  let Index = 0;
+    let newPublicRef = publicRef.push();
+    let newUserRef = userRef.child(newPublicRef.key);
 
-  let uploadedDate = await getDate();
-  blogData.uploadedDate = uploadedDate;
+    await newPublicRef.set(blogData);
+    await newUserRef.set(blogData);
+    
+    return {status:201, index:publicRef.key}
 
-  if (!publicSnapshots.exists()) {
-    await publicRef.set([blogData]);
-
-    blogData.Index = Index;
-    await userRef.set([blogData])
-
-    return { status: 201, index: 0 };
-
-  } else {
-    let data = publicSnapshots.val();
-    data.push(blogData);
-
-    Index = data.length - 1;
-    blogData.Index = Index;
-
-    if (!userSanpshots.exists()) {
-      userRef.set([blogData]);
-
-    } else {
-      let userData = userSanpshots.val();
-      userData.push(blogData)
-      await userRef.set(userData);
-    }
-
-    await publicRef.set(data);
-    return { status: 201, index: data.length - 1 };
+  } catch (error) {
+    console.log('there was an error', error)
   }
 
 }

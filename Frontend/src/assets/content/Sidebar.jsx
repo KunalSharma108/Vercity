@@ -17,8 +17,9 @@ function Sidebar() {
         const response = await axios.post(`${backendAPI}/GetUserData`, {}, {
           withCredentials: true,
           timeout: 30000
-        });
-        setData(response.data.data);
+        }).then((res) => {
+          setData(res.data.data);
+        })
       } catch (error) {
         if (error.response?.status === 404) {
           setData(false);
@@ -40,6 +41,7 @@ function Sidebar() {
   const handleBlogClick = (index) => {
     Navigate(`/Blog/${index}`)
   }
+
 
   return (
     <div className='w-full h-full flex items-center justify-between border-r border-r-[#45475A]'>
@@ -92,18 +94,24 @@ function Sidebar() {
                     <h2 className="text-xl font-semibold tracking-wide uppercase ml-2">Blogs</h2>
                   </div>
                   {showBlogs && (
-                    <ul className="space-y-2">
-                      {data.Blogs.map((blog, idx) => (
-                        <li
-                          key={idx}
-                          className="cursor-pointer hover:bg-[#2A2A3C] text-white p-2 ml-10 rounded transition-all"
-                          onClick={() => handleBlogClick(idx)}
-                        >
-                          {blog.title}
-                        </li>
-                      ))}
+                    <ul className="space-y-1 list-disc list-inside ml-6">
+                      {Object.keys(data.Blogs).map((blog, idx) => {
+                        let BLOG = data.Blogs[blog];
+
+                        return (
+                          <li
+                            key={idx}
+                            className="cursor-pointer hover:bg-[#2A2A3C] text-white px-3 py-1 rounded transition-all overflow-hidden whitespace-nowrap text-ellipsis"
+                            onClick={() => handleBlogClick(idx)}
+                            title={BLOG.title}
+                          >
+                            {BLOG.title}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
+
                 </div>
               )}
 
@@ -113,24 +121,34 @@ function Sidebar() {
                     className="flex justify-start items-center cursor-pointer text-white mb-2"
                     onClick={() => setShowDrafts(!showDrafts)}
                   >
-                    <FontAwesomeIcon icon={faCaretDown} className={`${showDrafts ? '' : '-rotate-[90deg]'} ml-2 duration-100 ease-in-out`} />
+                    <FontAwesomeIcon
+                      icon={faCaretDown}
+                      className={`${showDrafts ? '' : '-rotate-[90deg]'} ml-2 duration-100 ease-in-out`}
+                    />
                     <h2 className="text-xl font-semibold tracking-wide uppercase ml-2">Drafts</h2>
                   </div>
+
                   {showDrafts && (
-                    <ul className="space-y-2">
-                      {data.drafts.map((draft, idx) => (
-                        <li
-                          key={idx}
-                          className="cursor-pointer hover:bg-[#2A2A3C] text-white p-2 rounded transition-all ml-10"
-                          onClick={() => handleDraftClick(idx)}
-                        >
-                          {draft.title}
-                        </li>
-                      ))}
+                    <ul className="space-y-1 list-disc list-inside ml-6">
+                      {Object.keys(data.drafts).map((key, idx) => {
+                        const draft = data.drafts[key];
+
+                        return (
+                          <li
+                            key={key}
+                            className="cursor-pointer hover:bg-[#2A2A3C] text-white px-3 py-1 rounded transition-all overflow-hidden whitespace-nowrap text-ellipsis"
+                            onClick={() => handleDraftClick(idx)}
+                            title={draft.title}
+                          >
+                            {draft.title}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
               )}
+
             </div>
 
           </>
