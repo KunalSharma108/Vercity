@@ -31,7 +31,7 @@ async function getBlogs({ ID, authToken }) {
       if (snapshots.exists()) {
         return { status: 201, data: snapshots.val() }
       } else if (!snapshots.exists()) {
-        return {status: 404, data:'not found'}
+        return { status: 404, data: 'not found' }
       }
     } catch (error) {
       return { status: 409, data: 'There was an unexpected error' }
@@ -54,4 +54,121 @@ async function getBlogs({ ID, authToken }) {
     }
   }
 }
-module.exports = { getUserData, getBlogs }
+
+async function fetchBlog({ key }) {
+  const blogRef = db.ref('Blogs');
+  const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
+  if (snapshots.exists()) {
+    return { status: 201, data: snapshots.val() }
+  } else {
+    return { status: 404, data: 'not found' };
+  }
+}
+
+async function addLike({ key, authToken }) {
+  let user = await Verify_Key(authToken);
+  let encodedUID = encodeToBase64(user.payload.uid);
+  const blogRef = db.ref('Blogs');
+  const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
+
+  if (snapshots.exists()) {
+    let blogContent = snapshots.val();
+    let Key = Object.keys(blogContent)[0];
+    let newBlogContent = Object.values(blogContent)[0];
+
+    if (!Array.isArray(newBlogContent.usersLiked)) newBlogContent.usersLiked = [];
+    if (Array.isArray(newBlogContent.usersDisliked)) {
+      newBlogContent.usersDisliked = newBlogContent.usersDisliked.filter(uid => uid !== encodedUID);
+    }
+
+    if (!newBlogContent.usersLiked.includes(encodedUID)) {
+      newBlogContent.usersLiked.push(encodedUID);
+    } else {
+      return { status: 409, message: "User already liked" };
+    }
+
+    if (newBlogContent.usersDisliked.length === 0) newBlogContent.usersDisliked = false;
+    if (newBlogContent.usersLiked.length === 0) newBlogContent.usersLiked = false;
+
+    await blogRef.child(Key).update(newBlogContent);
+    return { status: 201, message: "Like added" };
+  } else {
+    return { status: 404 };
+  }
+}
+
+async function addDislike({ key, authToken }) {
+  let user = await Verify_Key(authToken);
+  let encodedUID = encodeToBase64(user.payload.uid);
+  const blogRef = db.ref('Blogs');
+  const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
+
+  if (snapshots.exists()) {
+    let blogContent = snapshots.val();
+    let Key = Object.keys(blogContent)[0];
+    let newBlogContent = Object.values(blogContent)[0];
+
+    if (Array.isArray(newBlogContent.usersLiked)) {
+      newBlogContent.usersLiked = newBlogContent.usersLiked.filter(uid => uid !== encodedUID);
+    }
+    if (!Array.isArray(newBlogContent.usersDisliked)) newBlogContent.usersDisliked = [];
+
+    if (!newBlogContent.usersDisliked.includes(encodedUID)) {
+      newBlogContent.usersDisliked.push(encodedUID);
+    } else {
+      return { status: 409, message: "User already disliked" };
+    }
+
+    if (newBlogContent.usersDisliked.length === 0) newBlogContent.usersDisliked = false;
+    if (newBlogContent.usersLiked.length === 0) newBlogContent.usersLiked = false;
+
+    await blogRef.child(Key).update(newBlogContent);
+    return { status: 201, message: "Dislike added" };
+  } else {
+    return { status: 404 };
+  }
+}
+
+async function removeLike({ key, authToken }) {
+  let user = await Verify_Key(authToken);
+  let encodedUID = encodeToBase64(user.payload.uid);
+  const blogRef = db.ref('Blogs');
+  const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
+
+  if (snapshots.exists()) {
+    let blogContent = snapshots.val();
+    let Key = Object.keys(blogContent)[0];
+    let newBlogContent = Object.values(blogContent)[0];
+
+    newBlogContent.usersLiked = newBlogContent.usersLiked.filter(uid => uid !== encodedUID);
+    if (newBlogContent.usersLiked.length === 0) newBlogContent.usersLiked = false;
+
+    await blogRef.child(Key).update(newBlogContent);
+    return { status: 201, message: "Like removed" };
+  } else {
+    return { status: 404 };
+  }
+}
+
+async function removeDislike({ key, authToken }) {
+  let user = await Verify_Key(authToken);
+  let encodedUID = encodeToBase64(user.payload.uid);
+  const blogRef = db.ref('Blogs');
+  const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
+
+  if (snapshots.exists()) {
+    let blogContent = snapshots.val();
+    let Key = Object.keys(blogContent)[0];
+    let newBlogContent = Object.values(blogContent)[0];
+
+    newBlogContent.usersDisliked = newBlogContent.usersDisliked.filter(uid => uid !== encodedUID);
+    if (newBlogContent.usersDisliked.length === 0) newBlogContent.usersDisliked = false;
+
+    await blogRef.child(Key).update(newBlogContent);
+    return { status: 201, message: "Dislike removed" };
+  } else {
+    return { status: 404 };
+  }
+}
+
+module.exports = { getUserData, getBlogs, fetchBlog, addLike, addDislike, removeLike, removeDislike }

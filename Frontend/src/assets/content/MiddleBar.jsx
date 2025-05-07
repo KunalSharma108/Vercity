@@ -97,8 +97,7 @@ function MiddleBar() {
   }, [blogContent, blogId]);
 
   const handleBlogClick = (blog) => {
-    alert(`/blog/${blog}`);
-    Navigate(`/blog/${blog}`)
+    Navigate(`/blog/${blog}`);
   }
 
   return (

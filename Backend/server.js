@@ -11,7 +11,7 @@ const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
 const { saveDraft, getDrafts, deleteDraft, updateDraft, uploadBlog } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
-const { getUserData, getBlogs } = require('./functions/mainFunc');
+const { getUserData, getBlogs, fetchBlog, addLike, addDislike } = require('./functions/mainFunc');
 
 app.use(cors({
   origin: ORIGIN,
@@ -233,7 +233,44 @@ app.post('/GetBlogs', async (req, res) => {
   } else {
     return res.status(409).json({ msg: 'There was an unexpected error.' })
   }
-})
+});
+
+app.post('/GetBlog', async (req, res) => {
+  const key = req.body.key
+  const response = await fetchBlog({ key: key });
+
+  if (response.status == 201) {
+    return res.status(201).json({ data: response.data });
+  } else {
+    return res.status(404).json({ data: 'not found' });
+  }
+});
+
+app.post('/BlogLike', async (req, res) => {
+  const key = req.body.key;
+  const authToken = req.cookies['auth_token'];
+
+  let response = await addLike({ key: key, authToken: authToken });
+
+  if (response.status == 201) {
+    return res.status(201).json({data: 'done'})
+  } else {
+    return res.status(401).json({data: 'an error occured'})
+  }
+});
+
+app.post('/BlogDislike', async (req, res) => {
+  const key = req.body.key;
+  const authToken = req.cookies['auth_token'];
+
+  let response = await addDislike({ key: key, authToken: authToken });
+
+  if (response.status == 201) {
+    return res.status(201).json({ data: 'done' })
+  } else {
+    return res.status(401).json({ data: 'an error occured' })
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}!`);
