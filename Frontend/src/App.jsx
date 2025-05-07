@@ -7,10 +7,11 @@ import Loading from './templates/loading';
 import Offline from './templates/offline';
 const SignUp = lazy(() => import('./assets/User/SignUp/SignUp'));
 const LogIn = lazy(() => import('./assets/User/LogIn/logIn'));
-const MainContent = lazy(() => import('./assets/content/MainContent'));
 import CreateBlogMain from './assets/CreateBlog/CreateBlogMain';
 import Cookies from 'js-cookie';
 import React from 'react';
+import MainContent from './assets/content/MainContent';
+import ShowBlogContentMain from './ShowBlogContent/ShowBlogContentMain';
 
 function App() {
   const navRef = useRef(null);
@@ -132,15 +133,20 @@ function App() {
           </div>
         )} />
 
+        <Route path='/blog/:key' element={(
+          <div className={`bg-base text-neutral h-screen`} ref={screenRef}>
+            <>
+              <Navbar navRef={navRef} loggedIn={loggedIn} path={'CreateBlog'} />
+              <div className='h-screen bg-base' style={{ paddingTop: `${navHeight}px` }}>
+                <ShowBlogContentMain navHeight={navHeight} screenHeight={screenHeight} />
+              </div>
+            </>
+          </div>
+        )} />
+
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
-
-
-
-
-// create a way from which if the drafts dont exist it will show a default text of "No drafts"

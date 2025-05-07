@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import backendAPI from '../API/backendAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faComment, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+
 
 function MiddleBar() {
   const [blogId, setBlogId] = useState(false);
@@ -11,6 +13,7 @@ function MiddleBar() {
   const [loading, setLoading] = useState(true);
   const [furtherLoading, setFurtherLoading] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState(0);
+  const Navigate = useNavigate();
 
   const fetchMoreBlogs = async () => {
     try {
@@ -47,7 +50,6 @@ function MiddleBar() {
           timeout: 100000,
         }).then((res) => {
           setBlogId(Object.keys(res.data.data)[Object.keys(res.data.data).length - 1])
-          console.log(blogId)
           setBlogContent(res.data.data);
           setLoading(false)
         })
@@ -94,6 +96,11 @@ function MiddleBar() {
     if (node) observerRef.current.observe(node);
   }, [blogContent, blogId]);
 
+  const handleBlogClick = (blog) => {
+    alert(`/blog/${blog}`);
+    Navigate(`/blog/${blog}`)
+  }
+
   return (
     <div className='w-full h-full p-2'>
       {loading ? (
@@ -110,6 +117,7 @@ function MiddleBar() {
                 ref={idx === Object.keys(blogContent).length - 1 ? divRef : null}
                 key={key}
                 className="w-11/12 max-w-4xl border-4 border-secondary shadow-secondary shadow-md rounded-2xl py-8 px-6 my-8 hover:shadow-even-2xl hover:shadow-secondary hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 cursor-pointer"
+                onClick={() => handleBlogClick(key)}
               >
                 <h2 className="font-serif font-bold text-3xl text-white mb-4">{blog.title}</h2>
 

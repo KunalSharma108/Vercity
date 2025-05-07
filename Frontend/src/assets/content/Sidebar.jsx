@@ -38,8 +38,8 @@ function Sidebar() {
     Navigate(`/CreateBlog/draft/${index}`)
   };
 
-  const handleBlogClick = (index) => {
-    Navigate(`/Blog/${index}`)
+  const handleBlogClick = (blog) => {
+    Navigate(`/blog/${blog}`)
   }
 
 
@@ -102,7 +102,7 @@ function Sidebar() {
                           <li
                             key={idx}
                             className="cursor-pointer hover:bg-[#2A2A3C] text-white px-3 py-1 rounded transition-all overflow-hidden whitespace-nowrap text-ellipsis"
-                            onClick={() => handleBlogClick(idx)}
+                            onClick={() => handleBlogClick(blog)}
                             title={BLOG.title}
                           >
                             {BLOG.title}
