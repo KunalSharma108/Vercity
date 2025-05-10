@@ -9,37 +9,7 @@ import Cookies from 'js-cookie';
 
 function Navbar({ navRef, loggedIn, path}) {
   const navigate = useNavigate();
-  const [isFocus, setisFocus] = useState(false);
   const [shadowState, setShadowState] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    const statePair = {
-      5: 'sm',
-      10: 'md',
-      15: 'lg',
-      20: 'xl',
-      25: '2xl',
-      30: '3xl',
-      35: '4xl',
-      40: '5xl'
-    };
-
-    Object.keys(statePair).forEach((key) => {
-      // Convert the key to a number for comparison
-      const numericKey = Number(key);
-
-      // Check if the length of searchQuery is greater than or equal to the key
-      if (searchQuery.length + 2 >= numericKey) {
-        // Setting Custom concern of shadow according to the input length
-        setShadowState(`shadow-even-${statePair[key]}`);
-      }
-
-      if (searchQuery.length == 0) {
-        setShadowState('');
-      }
-    });
-  }, [searchQuery]);
 
   const handleSignOut = async () => {
     let result = await axios.post(`${backendAPI}/LogOut`, {}, {
@@ -66,26 +36,6 @@ function Navbar({ navRef, loggedIn, path}) {
           className='filter brightness-125 contrast-100 hover:grayscale-0 transition duration-300 h-14 cursor-pointer'
           onClick={() => navigate('/')}
         />
-      </div>
-
-      <div className="flex-grow w-2/4 py-2"> {/* 50% for search bar */}
-        <form action="" className='flex items-center justify-center w-full'>
-          <div className={`relative flex items-center justify-center py-2 px-2 w-full rounded-md ${!isFocus ? 'shadow-even-md duration-0' : ''}
-            ${isFocus ? `outline-primary outline-2 shadow-primary outline transition-shadow shadow duration-300 ${shadowState}` : ''}`}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} className='mx-1' />
-            <input
-              type="text"
-              placeholder='Search...'
-              className='w-full border-0 py-1 px-2 bg-transparent rounded-none focus:outline-0'
-              onFocus={() => setisFocus(true)}
-              onBlur={() => setisFocus(false)}
-              value={searchQuery}
-              onChange={async (e) => {
-                setSearchQuery(e.target.value)
-              }}
-            />
-          </div>
-        </form>
       </div>
 
       <div className="flex-none w-1/4 mx-8 px-2"> {/* 25% for links */}

@@ -11,7 +11,7 @@ const { CreateUser, LogInUser } = require('./functions/User');
 const { Verify_Key } = require('./functions/JWT_Keys');
 const { saveDraft, getDrafts, deleteDraft, updateDraft, uploadBlog } = require('./functions/blogFunc');
 const { admin } = require('./functions/firebaseconfig');
-const { getUserData, getBlogs, fetchBlog, addLike, addDislike } = require('./functions/mainFunc');
+const { getUserData, getBlogs, fetchBlog, addLike, addDislike, removeLike, removeDislike, addComment } = require('./functions/mainFunc');
 
 app.use(cors({
   origin: ORIGIN,
@@ -237,7 +237,8 @@ app.post('/GetBlogs', async (req, res) => {
 
 app.post('/GetBlog', async (req, res) => {
   const key = req.body.key
-  const response = await fetchBlog({ key: key });
+  const authToken = req.cookies['auth_token'];
+  const response = await fetchBlog({ key: key, authToken: authToken });
 
   if (response.status == 201) {
     return res.status(201).json({ data: response.data });
@@ -253,9 +254,9 @@ app.post('/BlogLike', async (req, res) => {
   let response = await addLike({ key: key, authToken: authToken });
 
   if (response.status == 201) {
-    return res.status(201).json({data: 'done'})
+    return res.status(201).json({ data: 'done' })
   } else {
-    return res.status(401).json({data: 'an error occured'})
+    return res.status(401).json({ data: 'an error occured' })
   }
 });
 
@@ -271,6 +272,46 @@ app.post('/BlogDislike', async (req, res) => {
     return res.status(401).json({ data: 'an error occured' })
   }
 });
+
+app.post('/BlogRemoveLike', async (req, res) => {
+  const key = req.body.key;
+  const authToken = req.cookies['auth_token'];
+
+  let response = await removeLike({ key: key, authToken: authToken });
+
+  if (response.status == 201) {
+    return res.status(201).json({ data: 'done' })
+  } else {
+    return res.status(401).json({ data: 'an error occured' })
+  }
+})
+
+app.post('/BlogRemoveDislike', async (req, res) => {
+  const key = req.body.key;
+  const authToken = req.cookies['auth_token'];
+
+  let response = await removeDislike({ key: key, authToken: authToken });
+
+  if (response.status == 201) {
+    return res.status(201).json({ data: 'done' })
+  } else {
+    return res.status(401).json({ data: 'an error occured' })
+  }
+});
+
+app.post('/addComment', async (req, res) => {
+  const key = req.body.key;
+  const Comment = req.body.comment;
+  const authToken = req.cookies['auth_token'];
+
+  let response = await addComment({key:key, authToken: authToken, Comment: Comment});
+
+  if (response.status == 201) {
+    return res.status(201).json({data:'done'});
+  } else {
+    return res.status(401).json({data: 'an error occured'})
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}!`);

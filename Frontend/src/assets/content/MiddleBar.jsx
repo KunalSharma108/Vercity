@@ -127,9 +127,15 @@ function MiddleBar() {
 
                 <div className="flex items-center justify-between text-xs text-white/80">
                   <div className="flex gap-6">
-                    <span className="text-lg"><FontAwesomeIcon icon={faThumbsUp} size="lg" /> {blog.likesCount}</span>
-                    <span className="text-lg"><FontAwesomeIcon icon={faThumbsDown} size="lg" /> {blog.dislikesCount}</span>
-                    <span className="text-lg"><FontAwesomeIcon icon={faComment} size="lg" /> {blog.comments ? 1 : 0}</span>
+                    <span className="text-lg"><FontAwesomeIcon icon={faThumbsUp} size="lg" className='mr-2' />
+                      {Object.keys(blog.usersLiked).length}
+                    </span>
+                    <span className="text-lg"><FontAwesomeIcon icon={faThumbsDown} size="lg" className='mr-2' />
+                      {Object.keys(blog.usersDisliked).length}
+                    </span>
+                    <span className="text-lg"><FontAwesomeIcon icon={faComment} size="lg" className='mr-2' />
+                      {blog.comments ? 1 : 0}
+                    </span>
                   </div>
                   <div>
                     by {blog.Author} • {blog.uploadedDate || blog.date}

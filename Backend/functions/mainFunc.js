@@ -1,6 +1,6 @@
 const { db } = require("./firebaseconfig");
 const { Verify_Key } = require("./JWT_Keys");
-const { encodeToBase64 } = require("./smallFunc");
+const { encodeToBase64, getDate } = require("./smallFunc");
 
 async function getUserData({ authToken }) {
   try {
@@ -55,14 +55,47 @@ async function getBlogs({ ID, authToken }) {
   }
 }
 
-async function fetchBlog({ key }) {
+async function fetchBlog({ key, authToken }) {
+  let encodedUID = '';
+  if (authToken) {    
+    let user = await Verify_Key(authToken);
+    encodedUID = encodeToBase64(user.payload.uid);
+  } 
   const blogRef = db.ref('Blogs');
   const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
   if (snapshots.exists()) {
-    return { status: 201, data: snapshots.val() }
+    const data = snapshots.val();
+
+    if (authToken) {
+      if (data[key].usersLiked) {
+        const likedUsers = Object.values(data[key].usersLiked);
+        if (likedUsers.includes(encodedUID)) {
+          data[key].youLiked = true;
+        } else {
+          data[key].youLiked = false;
+        }
+      } else {
+        data[key].youLiked = false;
+      }
+  
+      if (data[key].usersDisliked) {
+        const dislikedUsers = Object.values(data[key].usersDisliked);
+        if (dislikedUsers.includes(encodedUID)) {
+          data[key].youDisliked = true;
+        } else {
+          data[key].youDisliked = false;
+        }
+      } else {
+        data[key].youDisliked = false;
+      }
+    }
+
+
+    return { status: 201, data };
   } else {
     return { status: 404, data: 'not found' };
   }
+
 }
 
 async function addLike({ key, authToken }) {
@@ -169,6 +202,42 @@ async function removeDislike({ key, authToken }) {
   } else {
     return { status: 404 };
   }
+};
+
+async function addComment({key, authToken, Comment}) {
+  let user = await Verify_Key(authToken);
+  let encodedUID = encodeToBase64(user.payload.uid);
+
+  const blogRef = db.ref('Blogs');
+  const snapshots = await blogRef.orderByKey().equalTo(key).once('value');
+  const userRef = db.ref(`${encodedUID}/profile`);
+
+  let author;
+  let date = getDate();
+
+  await userRef.once('value').then((snapshots) => author = snapshots.val().Username);
+  
+  let commentObject = {
+    Author: author,
+    commentContent: Comment,
+    uploadedDate: date,
+  }
+  
+  if (snapshots.exists()) {
+    let data = snapshots.val();
+
+    if (!data[key].comments || data[key].comments === false) {
+      data[key].comments = [commentObject];
+      await db.ref(`Blogs/${key}`).child('comments').set(data[key].comments);
+      return {status:201}
+    } else {
+      data[key].comments.push(commentObject);
+      await db.ref(`Blogs/${key}`).child('comments').set(data[key].comments);
+
+      return { status: 201 }
+    }
+  }
+
 }
 
-module.exports = { getUserData, getBlogs, fetchBlog, addLike, addDislike, removeLike, removeDislike }
+module.exports = { getUserData, getBlogs, fetchBlog, addLike, addDislike, removeLike, removeDislike, addComment }
