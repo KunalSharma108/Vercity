@@ -90,11 +90,14 @@ function MainBar() {
     if (!loggedIn) return alert('Log in to post a comment.')
     if (!newComment.trim()) return alert('Cant post an empty comment');
 
-    // setPostingComment(true);
+    setPostingComment(true);
     let response = await axios.post(`${backendAPI}/addComment`,
       { key: key, comment: newComment },
       { withCredentials: true }).then((res) => {
-
+        window.location.reload();
+      }).catch((err) => {
+        alert('There was an error while posting the comment.')
+        setPostingComment(false);
       })
   }
 
