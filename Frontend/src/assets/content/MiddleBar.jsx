@@ -134,7 +134,7 @@ function MiddleBar() {
                       {Object.keys(blog.usersDisliked).length}
                     </span>
                     <span className="text-lg"><FontAwesomeIcon icon={faComment} size="lg" className='mr-2' />
-                      {blog.comments ? 1 : 0}
+                      {blog.comments ? blog.comments.length : 0}
                     </span>
                   </div>
                   <div>
