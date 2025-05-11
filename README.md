@@ -64,7 +64,9 @@ npm run dev
 
 ## Features of this website
 
-- Create and publish blog posts  
+- Create and publish blog posts
+- Create Drafts to Update or Publish them later
+- Like and Dislike Blogs
 - Comment on blog posts  
 - Firebase Authentication (Frontend only)  
 - Firebase Admin SDK (Backend for data storage)
