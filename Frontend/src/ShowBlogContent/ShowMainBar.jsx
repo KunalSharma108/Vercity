@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown, faComment, faExclamationTriangle, faTruckFieldUn } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
 
-function MainBar() {
+function ShowMainBar() {
   const [Loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(true);
   const [blogContent, setBlogContent] = useState();
@@ -219,4 +219,4 @@ function MainBar() {
   );
 }
 
-export default MainBar
+export default ShowMainBar

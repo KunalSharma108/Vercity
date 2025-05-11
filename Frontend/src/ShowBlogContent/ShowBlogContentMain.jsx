@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../assets/content/Sidebar';
-import MainBar from './mainBar';
+import ShowMainBar from './ShowMainBar';
 
 function ShowBlogContentMain(height) {
   return (
@@ -12,7 +12,7 @@ function ShowBlogContentMain(height) {
       </div>
 
       <div className='w-3/4 h-full overflow-x-hidden overflow-y-auto'>
-        <MainBar />
+        <ShowMainBar />
       </div>
 
     </div>
