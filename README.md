@@ -37,7 +37,7 @@ npm install
 - In the frontend, create a `.env` file and add:
 
 ```env
-VITE_BACKEND_API=http://your-backend-url
+VITE_BACKEND_API=http://localhost:3000
 ```
 
 - Then create a JS file (e.g., `config.js`) in the frontend and add:
