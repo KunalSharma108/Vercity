@@ -267,7 +267,7 @@ function LogInContent() {
 
             <div className="text-center mb-4">
               <Link className="text-blue-400 hover:underline" to={'/SignUp'}>
-                Already have an account?
+                Dont have an account?
               </Link>
             </div>
 

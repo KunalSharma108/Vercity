@@ -113,7 +113,7 @@ async function uploadBlog({ blogData, authToken }) {
     await newPublicRef.set(blogData);
     await newUserRef.set(blogData);
     
-    return {status:201, index:publicRef.key}
+    return {status:201, index:newPublicRef.key}
 
   } catch (error) {
     console.log('there was an error', error)

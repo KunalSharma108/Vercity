@@ -148,7 +148,7 @@ function BlogContent({ DialogType, content, index, render, triggerLoading }) {
   }
 
   const handleViewBlog = (index) => {
-    alert(index)
+    Navigate(`/blog/${index}`);
   }
 
   const handleUpload = () => {

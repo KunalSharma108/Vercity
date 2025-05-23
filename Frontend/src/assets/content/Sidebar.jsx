@@ -71,12 +71,12 @@ function Sidebar() {
                 <p className="text-center text-sm text-gray-300">{data.profile.Email}</p>
                 <div className="flex justify-center gap-4 text-sm text-gray-300 pt-2">
                   <span>
-                    Blogs: <span className="font-semibold text-white">{data.Blogs?.length || 0}</span>
+                    Blogs: <span className="font-semibold text-white">{data.Blogs ? Object.keys(data.Blogs).length : 0}</span>
                   </span>
                   <span>
                     Drafts:{" "}
                     <span className="font-semibold text-white">
-                      {data.drafts ? data.drafts.length : 0}
+                      {data.drafts ? Object.keys(data.drafts).length : 0}
                     </span>
                   </span>
                 </div>
